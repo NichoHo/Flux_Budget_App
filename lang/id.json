@@ -1,0 +1,15 @@
+{
+    "Dashboard": "Beranda",
+    "Date": "Tanggal",
+    "Description": "Deskripsi",
+    "Type": "Tipe",
+    "Amount": "Jumlah",
+    "Receipt": "Bukti Transaksi",
+    "Action": "Aksi",
+    "View Receipt": "Lihat Bukti",
+    "Delete": "Hapus",
+    "No Receipt": "Tidak Ada Bukti",
+    "Add Transaction": "Tambah Transaksi",
+    "Logout": "Keluar",
+    "Welcome": "Selamat Datang"
+}
