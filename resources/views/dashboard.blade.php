@@ -9,8 +9,6 @@
 @section('content')
 
 @php
-    // Get current currency from session, default based on locale if not set
-    $currentCurrency = session('currency', app()->getLocale() == 'id' ? 'IDR' : 'USD');
     $nextCurrency = $currentCurrency == 'USD' ? 'IDR' : 'USD';
 @endphp
 
@@ -87,6 +85,7 @@
                     <th>{{ __('table_date') }}</th>
                     <th>{{ __('table_description') }}</th>
                     <th>{{ __('table_type') }}</th>
+                    <th>{{ __('table_category') }}</th>
                     <th>{{ __('table_amount') }}</th>
                     <th>{{ __('table_receipt') }}</th>
                 </tr>
@@ -97,20 +96,37 @@
                         <td>{{ $transaction->created_at->format('Y-m-d') }}</td>
                         <td>{{ $transaction->description }}</td>
                         <td>
-                            <span class="badge {{ $transaction->type == 'income' ? 'text-success' : 'text-danger' }}">
+                            <span class="badge {{ $transaction->type == 'income' ? 'text-success badge-income' : 'text-danger badge-expense' }}">
                                 {{ ucfirst($transaction->type) }}
                             </span>
                         </td>
                         <td>
-                            @if($currentCurrency == 'IDR')
-                                Rp {{ number_format($transaction->amount, 0, ',', '.') }}
+                            @if($transaction->category && trim($transaction->category) !== '')
+                                <span class="badge {{ $transaction->type == 'income' ? 'badge-income-category' : 'badge-expense-category' }}">
+                                    {{ $transaction->category }}
+                                </span>
                             @else
-                                $ {{ number_format($transaction->amount, 2, '.', ',') }}
+                                <span class="text-muted">-</span>
+                            @endif
+                        </td>
+                        <td>
+                            @if($currentCurrency == 'IDR')
+                                Rp {{ number_format($transaction->display_amount, 0, ',', '.') }}
+                            @else
+                                $ {{ number_format($transaction->display_amount, 2, '.', ',') }}
                             @endif
                         </td>
                         <td>
                             @if($transaction->receipt_image_url)
-                                <a href="{{ asset('storage/' . $transaction->receipt_image_url) }}" target="_blank" class="btn-link">
+                                @php
+                                    // Check if the path is already a full URL or a storage path
+                                    $receiptPath = $transaction->receipt_image_url;
+                                    if (!\Illuminate\Support\Str::startsWith($receiptPath, 'http')) {
+                                        // If it's a storage path, use the storage URL helper
+                                        $receiptPath = Storage::url($receiptPath);
+                                    }
+                                @endphp
+                                <a href="{{ $receiptPath }}" target="_blank" class="btn-link">
                                     <i class="fas fa-paperclip"></i> View
                                 </a>
                             @else

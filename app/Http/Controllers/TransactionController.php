@@ -38,7 +38,7 @@ class TransactionController extends Controller
         $query->orderBy($sortBy, $sortOrder);
         
         // Get filtered transactions
-        $transactions = $query->get();
+        $transactions = $query->paginate(10);
         
         // Get current currency and exchange rate
         $currentCurrency = session('currency', 'IDR');
@@ -50,8 +50,11 @@ class TransactionController extends Controller
     // CREATE: Show the form
     public function create()
     {
+        // Currency is now initialized in app.blade.php, but let's make sure
         $currentCurrency = session('currency', 'IDR');
-        return view('transactions.create', compact('currentCurrency'));
+        $exchangeRate = $this->getExchangeRate();
+        
+        return view('transactions.create', compact('currentCurrency', 'exchangeRate'));
     }
 
     // STORE: Save new transaction to DB
@@ -61,8 +64,16 @@ class TransactionController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'type' => 'required|in:income,expense',
             'description' => 'required|string',
+            'category' => 'nullable|string|max:255',
             'receipt_image' => 'nullable|image|max:2048'
         ]);
+
+        // Validate category matches type
+        if (!$this->validateCategoryBasedOnType($request->type, $request->category)) {
+            return redirect()->back()
+                ->withErrors(['category' => 'Selected category does not match transaction type.'])
+                ->withInput();
+        }
 
         // Get current currency from session
         $currentCurrency = session('currency', 'IDR');
@@ -89,6 +100,7 @@ class TransactionController extends Controller
             'amount' => $amount, // Stored as IDR
             'type' => $request->type,
             'description' => $request->description,
+            'category' => $request->category,
             'receipt_image_url' => $path
         ]);
 
@@ -120,13 +132,16 @@ class TransactionController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $currentCurrency = session('currency', 'USD');
-        $exchangeRate = getExchangeRate();
+        $currentCurrency = session('currency', 'IDR'); // Changed default from 'USD' to 'IDR'
+        $exchangeRate = $this->getExchangeRate(); // Fixed: use $this->getExchangeRate() instead of getExchangeRate()
         
-        // Convert amount for display
-        $transaction->display_amount = $currentCurrency === 'IDR'
-            ? convertCurrency($transaction->amount, 'USD', 'IDR')
-            : $transaction->amount;
+        // Convert amount for display based on current currency
+        if ($currentCurrency === 'IDR') {
+            $transaction->display_amount = $transaction->amount; // Already stored as IDR
+        } else {
+            // If displaying in USD, convert from stored IDR to USD
+            $transaction->display_amount = $transaction->amount / $exchangeRate['rate'];
+        }
 
         return view('transactions.edit', compact('transaction', 'currentCurrency', 'exchangeRate'));
     }
@@ -143,8 +158,16 @@ class TransactionController extends Controller
             'amount' => 'required|numeric|min:0.01',
             'type' => 'required|in:income,expense',
             'description' => 'required|string',
+            'category' => 'nullable|string|max:255',
             'receipt_image' => 'nullable|image|max:2048'
         ]);
+
+        // Validate category matches type
+        if (!$this->validateCategoryBasedOnType($request->type, $request->category)) {
+            return redirect()->back()
+                ->withErrors(['category' => 'Selected category does not match transaction type.'])
+                ->withInput();
+        }
 
         // Get current currency from session
         $currentCurrency = session('currency', 'IDR');
@@ -172,6 +195,7 @@ class TransactionController extends Controller
         }
 
         // 2. Update other text fields (amount is stored as IDR)
+        $transaction->category = $request->category;
         $transaction->amount = $amount; // Store as IDR
         $transaction->type = $request->type;
         $transaction->description = $request->description;
@@ -203,5 +227,22 @@ class TransactionController extends Controller
             'rate' => 16000,
             'is_live' => false
         ];
+    }
+
+    private function validateCategoryBasedOnType($type, $category)
+    {
+        $incomeCategories = ['Salary', 'Freelance', 'Investment', 'Business', 'Other Income'];
+        $expenseCategories = ['Food', 'Shopping', 'Transportation', 'Entertainment', 'Bills & Utilities', 'Healthcare', 'Education', 'Travel', 'Other'];
+        
+        if ($category) {
+            if ($type === 'income' && !in_array($category, $incomeCategories)) {
+                return false;
+            }
+            if ($type === 'expense' && !in_array($category, $expenseCategories)) {
+                return false;
+            }
+        }
+        
+        return true;
     }
 }

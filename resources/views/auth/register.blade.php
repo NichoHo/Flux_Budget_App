@@ -12,7 +12,12 @@
 <body>
     <nav class="navbar fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}"><i class="fas fa-wallet"></i> Flux</a>
+            <a class="navbar-brand" href="{{ url('/') }}">
+                <img src="{{ asset('images/logo.png') }}" 
+                    alt="Flux Logo" 
+                    style="height: 30px; width: auto; margin-right: 8px; vertical-align: middle; padding-bottom: 3px;">
+                Flux
+            </a>
             <div class="d-flex align-items-center">
                 <a href="{{ route('lang.switch', app()->getLocale() == 'en' ? 'id' : 'en') }}" class="lang-toggle" title="Switch Language">
                     <i class="fas fa-globe"></i>
@@ -122,8 +127,8 @@
                     </a>
 
                     <div class="signup-footer">
-                        <span>{{ __('footer_text') }}</span>
-                        <a href="{{ route('login') }}">{{ __('footer_link') }}</a>
+                        <span>{{ __('signup_footer_text') }}</span>
+                        <a href="{{ route('login') }}">{{ __('signup_footer_link') }}</a>
                     </div>
                 </div>
             </div>
@@ -139,14 +144,14 @@
 
         if (isDark) {
             body.classList.add('dark-mode');
-            themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
+            themeToggle.innerHTML = '<i class="fas fa-cloud-sun"></i>';
         }
 
         themeToggle.addEventListener('click', () => {
             body.classList.toggle('dark-mode');
             const isDarkMode = body.classList.contains('dark-mode');
             localStorage.setItem('darkMode', isDarkMode);
-            themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+            themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-cloud-sun"></i>' : '<i class="fas fa-cloud-moon"></i>';
         });
 
         // Password toggle logic

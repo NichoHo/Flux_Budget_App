@@ -39,24 +39,17 @@
 <body>
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <!-- Logo on far left -->
+            <a class="navbar-brand" href="#">
+                <img src="{{ asset('images/logo.png') }}" 
+                    alt="Flux Logo" 
+                    style="height: 30px; width: auto; margin-right: 8px; vertical-align: middle; padding-bottom: 3px;">
+                Flux
+            </a>
 
-            <a class="navbar-brand mx-auto ms-lg-0" href="#"><i class="fas fa-wallet"></i> Flux</a>
-
-            <div class="d-flex align-items-center order-lg-3">
-                <a href="{{ route('lang.switch', app()->getLocale() == 'en' ? 'id' : 'en') }}" class="lang-toggle" title="Switch Language">
-                    <i class="fas fa-globe"></i>
-                </a>
-                
-                <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
-                    <i class="fas fa-cloud-moon"></i>
-                </button>
-            </div>
-
-            <div class="collapse navbar-collapse order-lg-2" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
+            <!-- Navigation links in center - hidden on mobile -->
+            <div class="d-none d-lg-block">
+                <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="#home">{{ __('nav_home') }}</a>
                     </li>
@@ -69,20 +62,30 @@
                     <li class="nav-item">
                         <a class="nav-link" href="#faq">FAQ</a>
                     </li>
-                    
-                    @auth
-                        <li class="nav-item ms-lg-2">
-                            <a class="btn-primary-custom btn-nav" href="{{ route('transactions.index') }}">{{ __('nav_dashboard') }}</a>
-                        </li>
-                    @else
-                        <li class="nav-item ms-lg-2">
-                            <a class="btn-primary-custom btn-nav" href="{{ route('register') }}">{{ __('nav_signup') }}</a>
-                        </li>
-                        <li class="nav-item ms-lg-2">
-                            <a class="btn-login-custom btn-nav" href="{{ route('login') }}">{{ __('nav_login') }}</a>
-                        </li>
-                    @endauth
                 </ul>
+            </div>
+
+            <!-- Right section with buttons and toggles -->
+            <div class="d-flex align-items-center">
+                <!-- Language and theme toggles -->
+                <a href="{{ route('lang.switch', app()->getLocale() == 'en' ? 'id' : 'en') }}" class="lang-toggle" title="Switch Language">
+                    <i class="fas fa-globe"></i>
+                </a>
+                
+                <button class="theme-toggle" id="themeToggle" title="Toggle Dark Mode">
+                    <i class="fas fa-cloud-moon"></i>
+                </button>
+
+                <!-- Divider -->
+                <div class="divider d-md-block"></div>
+
+                <!-- Auth buttons -->
+                @auth
+                    <a class="btn-primary-custom btn-nav ms-0 ms-md-2" href="{{ route('transactions.index') }}">{{ __('nav_dashboard') }}</a>
+                @else
+                    <a class="btn-primary-custom btn-nav ms-0 ms-md-2" href="{{ route('register') }}">{{ __('nav_signup') }}</a>
+                    <a class="btn-login-custom btn-nav ms-2 d-md-inline-block" href="{{ route('login') }}">{{ __('nav_login') }}</a>
+                @endauth
             </div>
         </div>
     </nav>
@@ -111,7 +114,7 @@
             <ul class="nav nav-pills feature-nav justify-content-center mb-5" id="pills-tab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="pills-f1-tab" data-bs-toggle="pill" data-bs-target="#pills-f1" type="button" role="tab" aria-controls="pills-f1" aria-selected="true">
-                        <i class="fas fa-lock me-2"></i> {{ __('feature1_title') }}
+                        <i class="fas fa-chart-line me-2"></i> {{ __('feature1_title') }}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
@@ -136,12 +139,12 @@
                     <div class="tab-container row align-items-center gy-5">
                         <div class="col-lg-6 order-lg-1 position-relative">
                             <div class="feature-image-blob"></div>
-                            <img src="{{ asset('images/finance.jpg') }}" alt="Security Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
+                            <img src="{{ asset('images/analytics.jpg') }}" alt="Security Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
                         </div>
                         <div class="col-lg-6 order-lg-2">
                             <h3 class="feature-heading display-6 fw-bold mb-4">{{ __('feature1_title') }}</h3>
                             <p class="feature-text lead mb-4">{{ __('feature1_desc') }}</p>
-                            <a href="{{ route('register') }}" class="btn btn-feature-teal">{{ __('hero_cta') }}</a>
+                            <a href="{{ route('register') }}" class="btn btn-feature">{{ __('hero_cta') }}</a>
                         </div>
                     </div>
                 </div>
@@ -150,12 +153,12 @@
                     <div class="row align-items-center gy-5">
                         <div class="col-lg-6 order-lg-1 position-relative">
                             <div class="feature-image-blob"></div>
-                            <img src="{{ asset('images/graph.webp') }}" alt="Management Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
+                            <img src="{{ asset('images/phone2.jpg') }}" alt="Management Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
                         </div>
                         <div class="col-lg-6 order-lg-2">
                             <h3 class="feature-heading display-6 fw-bold mb-4">{{ __('feature2_title') }}</h3>
                             <p class="feature-text lead mb-4">{{ __('feature2_desc') }}</p>
-                            <a href="{{ route('register') }}" class="btn btn-feature-teal">{{ __('hero_cta') }}</a>
+                            <a href="{{ route('register') }}" class="btn btn-feature">{{ __('hero_cta') }}</a>
                         </div>
                     </div>
                 </div>
@@ -164,12 +167,12 @@
                     <div class="row align-items-center gy-5">
                         <div class="col-lg-6 order-lg-1 position-relative">
                             <div class="feature-image-blob"></div>
-                            <img src="{{ asset('images/finance.jpg') }}" alt="Receipts Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
+                            <img src="{{ asset('images/phone3.jpg') }}" alt="Receipts Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
                         </div>
                         <div class="col-lg-6 order-lg-2">
                             <h3 class="feature-heading display-6 fw-bold mb-4">{{ __('feature3_title') }}</h3>
                             <p class="feature-text lead mb-4">{{ __('feature3_desc') }}</p>
-                            <a href="{{ route('register') }}" class="btn btn-feature-teal">{{ __('hero_cta') }}</a>
+                            <a href="{{ route('register') }}" class="btn btn-feature">{{ __('hero_cta') }}</a>
                         </div>
                     </div>
                 </div>
@@ -178,12 +181,12 @@
                     <div class="row align-items-center gy-5">
                         <div class="col-lg-6 order-lg-1 position-relative">
                             <div class="feature-image-blob"></div>
-                            <img src="{{ asset('images/graph.webp') }}" alt="Global Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
+                            <img src="{{ asset('images/conversation.jpg') }}" alt="Global Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
                         </div>
                         <div class="col-lg-6 order-lg-2">
                             <h3 class="feature-heading display-6 fw-bold mb-4">{{ __('feature4_title') }}</h3>
                             <p class="feature-text lead mb-4">{{ __('feature4_desc') }}</p>
-                            <a href="{{ route('register') }}" class="btn btn-feature-teal">{{ __('hero_cta') }}</a>
+                            <a href="{{ route('register') }}" class="btn btn-feature">{{ __('hero_cta') }}</a>
                         </div>
                     </div>
                 </div>

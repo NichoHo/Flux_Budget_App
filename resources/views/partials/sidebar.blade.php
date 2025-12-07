@@ -1,6 +1,9 @@
 <aside class="sidebar">
     <div class="sidebar-brand">
-        <i class="fas fa-wallet"></i> Flux
+        <img src="{{ asset('images/logo.png') }}" 
+            alt="Flux Logo" 
+            style="height: 30px; width: auto; vertical-align: middle;">
+        Flux
     </div>
 
     <ul class="sidebar-menu">
@@ -17,6 +20,14 @@
             <a href="{{ route('transactions.index') }}">
                 <i class="fas fa-exchange-alt"></i>
                 <span>{{ __('menu_transactions') }}</span>
+            </a>
+        </li>
+
+        <!-- Analytics Link -->
+        <li class="menu-item {{ request()->routeIs('analytics.*') ? 'active' : '' }}">
+            <a href="{{ route('analytics') }}">
+                <i class="fas fa-chart-pie"></i>
+                <span>{{ __('menu_analytics') }}</span>
             </a>
         </li>
         

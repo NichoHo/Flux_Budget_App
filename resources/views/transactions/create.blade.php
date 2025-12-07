@@ -2,10 +2,6 @@
 
 @section('title', 'Add Transaction - Flux')
 
-@php
-    $currentCurrency = session('currency', app()->getLocale() == 'id' ? 'IDR' : 'USD');
-@endphp
-
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/transactions.css') }}">
 @endsection
@@ -101,12 +97,23 @@
 
         <div class="form-group">
             <label class="form-label" for="type">{{ __('create_type_label') }}</label>
-            <select id="type" name="type" class="form-select @error('type') error @enderror" required>
+            <select id="type" name="type" class="form-select @error('type') error @enderror" required onchange="updateCategoryOptions()">
                 <option value="" disabled selected>{{ __('create_type_placeholder') }}</option>
                 <option value="expense" {{ old('type') == 'expense' ? 'selected' : '' }}>{{ __('create_type_expense') }}</option>
                 <option value="income" {{ old('type') == 'income' ? 'selected' : '' }}>{{ __('create_type_income') }}</option>
             </select>
             @error('type')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="category">{{ __('create_category_label') }}</label>
+            <select id="category" name="category" class="form-select @error('category') error @enderror" disabled>
+                <option value="" selected>{{ __('create_category_placeholder') }}</option>
+                <!-- Options will be populated by JavaScript -->
+            </select>
+            @error('category')
                 <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
@@ -145,6 +152,66 @@
 </div>
 
 <script>
+    const categoryOptions = {
+        income: [
+            { value: '', text: '{{ __("create_category_placeholder") }}' },
+            { value: 'Salary', text: '{{ __("Salary") }}' },
+            { value: 'Freelance', text: '{{ __("Freelance") }}' },
+            { value: 'Investment', text: '{{ __("Investment") }}' },
+            { value: 'Business', text: '{{ __("Business") }}' },
+            { value: 'Other Income', text: '{{ __("Other Income") }}' }
+        ],
+        expense: [
+            { value: '', text: '{{ __("create_category_placeholder") }}' },
+            { value: 'Food', text: '{{ __("Food") }}' },
+            { value: 'Shopping', text: '{{ __("Shopping") }}' },
+            { value: 'Transportation', text: '{{ __("Transportation") }}' },
+            { value: 'Entertainment', text: '{{ __("Entertainment") }}' },
+            { value: 'Bills & Utilities', text: '{{ __("Bills & Utilities") }}' },
+            { value: 'Healthcare', text: '{{ __("Healthcare") }}' },
+            { value: 'Education', text: '{{ __("Education") }}' },
+            { value: 'Travel', text: '{{ __("Travel") }}' },
+            { value: 'Other', text: '{{ __("Other") }}' }
+        ]
+    };
+
+    function updateCategoryOptions() {
+        const typeSelect = document.getElementById('type');
+        const categorySelect = document.getElementById('category');
+        const selectedType = typeSelect.value;
+        
+        // Clear current options
+        categorySelect.innerHTML = '';
+        
+        if (selectedType === 'income' || selectedType === 'expense') {
+            // Enable the select
+            categorySelect.disabled = false;
+            
+            // Add options based on selected type
+            const options = categoryOptions[selectedType];
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.value;
+                optionElement.textContent = option.text;
+                
+                // Check if this was the previously selected value
+                if (option.value === '{{ old("category") }}') {
+                    optionElement.selected = true;
+                }
+                
+                categorySelect.appendChild(optionElement);
+            });
+        } else {
+            // No type selected, disable category
+            categorySelect.disabled = true;
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = '{{ __("create_category_placeholder") }}';
+            defaultOption.selected = true;
+            categorySelect.appendChild(defaultOption);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // File input display
         const fileInput = document.getElementById('receipt_image');
@@ -171,6 +238,14 @@
                 }
             });
         }
-    });
+
+        const typeSelect = document.getElementById('type');
+        if (typeSelect.value) {
+            updateCategoryOptions();
+        }
+        
+        // Add event listener for type change
+        typeSelect.addEventListener('change', updateCategoryOptions);
+        });
 </script>
 @endsection

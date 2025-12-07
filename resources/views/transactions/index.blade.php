@@ -5,17 +5,13 @@
     use Illuminate\Support\Str;
 @endphp
 
-@section('title', __('Transactions') . ' - Flux')
+@section('title', __('menu_transactions') . ' - Flux')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/transactions.css') }}">
 @endsection
 
 @section('content')
-
-@php
-    $currentCurrency = session('currency', app()->getLocale() == 'id' ? 'IDR' : 'USD');
-@endphp
 
 <div class="transactions-header">
     <div class="header-content">
@@ -83,12 +79,13 @@
         <table class="transactions-table">
             <thead>
                 <tr>
-                    <th width="15%">{{ __('table_date') }}</th>
-                    <th width="30%">{{ __('table_description') }}</th>
-                    <th width="15%">{{ __('table_type') }}</th>
-                    <th width="15%">{{ __('table_receipt') }}</th>
-                    <th width="15%">{{ __('table_amount') }}</th>
-                    <th width="10%"></th>
+                    <th width="12%">{{ __('table_date') }}</th>
+                    <th width="25%">{{ __('table_description') }}</th>
+                    <th width="12%">{{ __('table_type') }}</th>
+                    <th width="15%">{{ __('table_category') }}</th>
+                    <th width="12%">{{ __('table_receipt') }}</th>
+                    <th width="12%">{{ __('table_amount') }}</th>
+                    <th width="12%"></th>
                 </tr>
             </thead>
             <tbody>
@@ -97,14 +94,20 @@
                     <td>{{ $transaction->created_at->format('Y-m-d') }}</td>
                     <td>
                         <div class="fw-bold">{{ $transaction->description }}</div>
-                        @if($transaction->category)
-                            <small class="text-muted">{{ $transaction->category }}</small>
-                        @endif
                     </td>
                     <td>
                         <span class="badge {{ $transaction->type == 'income' ? 'badge-income' : 'badge-expense' }}">
                             {{ ucfirst($transaction->type) }}
                         </span>
+                    </td>
+                    <td>
+                        @if($transaction->category)
+                            <span class="badge {{ $transaction->type == 'income' ? 'badge-income-category' : 'badge-expense-category' }}">
+                                {{ $transaction->category }}
+                            </span>
+                        @else
+                            <span class="text-secondary opacity-50">-</span>
+                        @endif
                     </td>
                     <td>
                         @if($transaction->receipt_image_url)
@@ -150,17 +153,35 @@
         </table>
     </div>
     
-    <!-- Pagination -->
+    <!-- Replace the entire pagination section with: -->
+    @if($transactions->hasPages())
     <div class="pagination-container">
-        <span class="page-info" id="pageInfo">Showing {{ $transactions->count() }} results</span>
+        <span class="page-info">
+            Showing {{ $transactions->firstItem() }} - {{ $transactions->lastItem() }} of {{ $transactions->total() }} results
+        </span>
         <div class="pagination-btns">
-            <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
-            <button class="page-btn active">1</button>
-            <button class="page-btn">2</button>
-            <button class="page-btn">3</button>
-            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+            @if ($transactions->onFirstPage())
+                <button class="page-btn disabled"><i class="fas fa-chevron-left"></i></button>
+            @else
+                <a href="{{ $transactions->previousPageUrl() }}" class="page-btn"><i class="fas fa-chevron-left"></i></a>
+            @endif
+            
+            @foreach ($transactions->getUrlRange(1, $transactions->lastPage()) as $page => $url)
+                @if ($page == $transactions->currentPage())
+                    <button class="page-btn active">{{ $page }}</button>
+                @else
+                    <a href="{{ $url }}" class="page-btn">{{ $page }}</a>
+                @endif
+            @endforeach
+            
+            @if ($transactions->hasMorePages())
+                <a href="{{ $transactions->nextPageUrl() }}" class="page-btn"><i class="fas fa-chevron-right"></i></a>
+            @else
+                <button class="page-btn disabled"><i class="fas fa-chevron-right"></i></button>
+            @endif
         </div>
     </div>
+    @endif
     @else
     <div class="no-data">
         <i class="fas fa-inbox"></i>

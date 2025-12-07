@@ -162,6 +162,36 @@
     font-weight: 600;
 }
 
+.badge-income-category {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-expense-category {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #8B5CF6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-income {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+}
+
+.badge-expense {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+}
+
 .text-success {
     color: #10B981;
 }

@@ -10,7 +10,7 @@ class Transaction extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'amount', 'type', 'description', 'receipt_image_url'
+        'user_id', 'amount', 'type', 'description', 'category', 'receipt_image_url'
     ];
 
     protected $casts = [

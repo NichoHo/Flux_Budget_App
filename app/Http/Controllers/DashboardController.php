@@ -13,6 +13,14 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         
+        // Initialize currency session if not set
+        if (!session()->has('currency')) {
+            $defaultCurrency = app()->getLocale() == 'id' ? 'IDR' : 'USD';
+            session(['currency' => $defaultCurrency]);
+        }
+        
+        $currentCurrency = session('currency', 'IDR');
+        
         // Get all user transactions (stored in IDR)
         $transactions = Transaction::where('user_id', $user->id)->get();
         
@@ -21,32 +29,37 @@ class DashboardController extends Controller
         $expense = $transactions->where('type', 'expense')->sum('amount');
         $balance = $income - $expense;
         
-        // Get current currency from session
-        $currentCurrency = session('currency', 'IDR');
+        // Get exchange rate
         $exchangeRate = $this->getExchangeRate();
         
         // Convert totals for display if needed
-        $displayBalance = $balance;
-        $displayIncome = $income;
-        $displayExpense = $expense;
-        
         if ($currentCurrency === 'USD') {
             $displayBalance = $balance / $exchangeRate['rate'];
             $displayIncome = $income / $exchangeRate['rate'];
             $displayExpense = $expense / $exchangeRate['rate'];
+        } else {
+            $displayBalance = $balance;
+            $displayIncome = $income;
+            $displayExpense = $expense;
         }
         
-        // Get recent transactions
+        // Get recent transactions WITH converted amounts
         $recentTransactions = Transaction::where('user_id', $user->id)
             ->latest()
             ->take(5)
             ->get()
             ->map(function ($transaction) use ($currentCurrency, $exchangeRate) {
                 // Add display amount based on current currency
-                $transaction->display_amount = $transaction->amount; // IDR
                 if ($currentCurrency === 'USD') {
                     $transaction->display_amount = $transaction->amount / $exchangeRate['rate'];
+                } else {
+                    $transaction->display_amount = $transaction->amount;
                 }
+                
+                // Ensure category is available (it should be from the query)
+                // Debug: Log the transaction data
+                // \Log::info('Transaction Data:', ['transaction' => $transaction->toArray()]);
+                
                 return $transaction;
             });
         

@@ -107,12 +107,23 @@
 
         <div class="form-group">
             <label class="form-label" for="type">{{ __('edit_type_label') }}</label>
-            <select id="type" name="type" class="form-select @error('type') error @enderror" required>
+            <select id="type" name="type" class="form-select @error('type') error @enderror" required onchange="updateCategoryOptions()">
                 <option value="" disabled>{{ __('edit_type_placeholder') }}</option>
                 <option value="expense" {{ (old('type', $transaction->type) == 'expense') ? 'selected' : '' }}>{{ __('edit_type_expense') }}</option>
                 <option value="income" {{ (old('type', $transaction->type) == 'income') ? 'selected' : '' }}>{{ __('edit_type_income') }}</option>
             </select>
             @error('type')
+                <div class="error-message">{{ $message }}</div>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="category">{{ __('edit_category_label') }}</label>
+            <select id="category" name="category" class="form-select @error('category') error @enderror" disabled>
+                <option value="" selected>{{ __('edit_category_placeholder') }}</option>
+                <!-- Options will be populated by JavaScript -->
+            </select>
+            @error('category')
                 <div class="error-message">{{ $message }}</div>
             @enderror
         </div>
@@ -174,6 +185,90 @@
 </div>
 
 <script>
+    const categoryOptions = {
+        income: [
+            { value: '', text: '{{ __("edit_category_placeholder") }}' },
+            { value: 'Salary', text: '{{ __("Salary") }}' },
+            { value: 'Freelance', text: '{{ __("Freelance") }}' },
+            { value: 'Investment', text: '{{ __("Investment") }}' },
+            { value: 'Business', text: '{{ __("Business") }}' },
+            { value: 'Other Income', text: '{{ __("Other Income") }}' }
+        ],
+        expense: [
+            { value: '', text: '{{ __("edit_category_placeholder") }}' },
+            { value: 'Food', text: '{{ __("Food") }}' },
+            { value: 'Shopping', text: '{{ __("Shopping") }}' },
+            { value: 'Transportation', text: '{{ __("Transportation") }}' },
+            { value: 'Entertainment', text: '{{ __("Entertainment") }}' },
+            { value: 'Bills & Utilities', text: '{{ __("Bills & Utilities") }}' },
+            { value: 'Healthcare', text: '{{ __("Healthcare") }}' },
+            { value: 'Education', text: '{{ __("Education") }}' },
+            { value: 'Travel', text: '{{ __("Travel") }}' },
+            { value: 'Other', text: '{{ __("Other") }}' }
+        ]
+    };
+
+    function updateCategoryOptions() {
+        const typeSelect = document.getElementById('type');
+        const categorySelect = document.getElementById('category');
+        const selectedType = typeSelect.value;
+        
+        // Clear current options
+        categorySelect.innerHTML = '';
+        
+        if (selectedType === 'income' || selectedType === 'expense') {
+            // Enable the select
+            categorySelect.disabled = false;
+            
+            // Add options based on selected type
+            const options = categoryOptions[selectedType];
+            const currentCategory = '{{ old("category", $transaction->category) }}';
+            
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option.value;
+                optionElement.textContent = option.text;
+                
+                // Check if this was the previously selected value
+                if (option.value === currentCategory) {
+                    optionElement.selected = true;
+                }
+                
+                categorySelect.appendChild(optionElement);
+            });
+            
+            // If current category doesn't match type, show warning
+            const currentType = '{{ $transaction->type }}';
+            const currentCat = '{{ $transaction->category }}';
+            if (selectedType !== currentType && currentCat) {
+                showCategoryWarning();
+            }
+        } else {
+            // No type selected, disable category
+            categorySelect.disabled = true;
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = '{{ __("edit_category_placeholder") }}';
+            defaultOption.selected = true;
+            categorySelect.appendChild(defaultOption);
+        }
+    }
+
+    function showCategoryWarning() {
+        // Check if warning already exists
+        if (!document.getElementById('category-warning')) {
+            const warningDiv = document.createElement('div');
+            warningDiv.id = 'category-warning';
+            warningDiv.className = 'alert alert-warning mt-2';
+            warningDiv.style.fontSize = '0.875rem';
+            warningDiv.style.padding = '0.5rem';
+            warningDiv.innerHTML = '⚠️ {{ __("category_type_mismatch") }}';
+            
+            const categorySelect = document.getElementById('category');
+            categorySelect.parentNode.insertBefore(warningDiv, categorySelect.nextSibling);
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function() {
         // File input display
         const fileInput = document.getElementById('receipt_image');
@@ -200,6 +295,12 @@
                 }
             });
         }
+
+        updateCategoryOptions();
+    
+        // Add event listener for type change
+        const typeSelect = document.getElementById('type');
+        typeSelect.addEventListener('change', updateCategoryOptions);
     });
 </script>
 @endsection

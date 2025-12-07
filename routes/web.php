@@ -5,7 +5,9 @@ use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\SettingsController; // Ensure this is imported
+use App\Http\Controllers\SettingsController;
+use App\Http\Controllers\CurrencyController;
+use App\Http\Controllers\AnalyticsController; // Add this line
 
 // 1. Localization Route (for language only)
 Route::get('/lang/{locale}', function ($locale) {
@@ -15,13 +17,9 @@ Route::get('/lang/{locale}', function ($locale) {
     return redirect()->back();
 })->name('lang.switch');
 
-// 1a. Currency Route (for currency only)
-Route::get('/currency/{currency}', function ($currency) {
-    if (in_array($currency, ['USD', 'IDR'])) {
-        session(['currency' => $currency]);
-    }
-    return redirect()->back();
-})->name('currency.switch');
+// 1a. Currency Route (for currency only) - Use controller
+Route::get('/currency/{currency}', [CurrencyController::class, 'switch'])
+    ->name('currency.switch');
 
 // 2. Guest Routes
 Route::middleware('guest')->group(function () {
@@ -37,7 +35,8 @@ Route::middleware('auth')->group(function () {
     
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
-    // Settings Route
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+    
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
 
     Route::resource('transactions', TransactionController::class);
@@ -50,14 +49,3 @@ Route::get('/', function () {
     }
     return view('landing');
 })->name('home');
-
-// Currency Route (for currency only)
-Route::get('/currency/{currency}', function ($currency) {
-    if (in_array($currency, ['USD', 'IDR'])) {
-        session(['currency' => $currency]);
-        
-        // Clear any cached currency data
-        session()->forget('exchange_rate');
-    }
-    return redirect()->back();
-})->name('currency.switch');

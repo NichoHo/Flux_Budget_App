@@ -10,6 +10,18 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
     @yield('styles')
 
+    <!-- Initialize currency session -->
+    @php
+        // Initialize currency session if not set
+        if (!session()->has('currency')) {
+            $defaultCurrency = app()->getLocale() == 'id' ? 'IDR' : 'USD';
+            session(['currency' => $defaultCurrency]);
+        }
+        
+        // Share with all views
+        $currentCurrency = session('currency', 'IDR');
+    @endphp
+
     <!-- Apply Dark Mode Immediately to prevent flash -->
     <script>
         // Check for dark mode preference on page load
