@@ -1,0 +1,235 @@
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary-light);
+    margin-bottom: 0.25rem;
+}
+.dark-mode .dashboard-header h1 { color: var(--text-primary-dark); }
+
+.dashboard-header p {
+    color: var(--text-secondary-light);
+}
+.dark-mode .dashboard-header p { color: var(--text-secondary-dark); }
+
+.header-content {
+    flex: 1;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* Balance Cards */
+.balance-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.balance-card {
+    background-color: var(--surface-light);
+    border: 1px solid var(--border-light);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+.dark-mode .balance-card {
+    background-color: var(--surface-dark);
+    border-color: var(--border-dark);
+}
+
+.card-icon {
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 0.75rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.card-total .card-icon { background: linear-gradient(135deg, var(--primary-light), var(--accent-light)); }
+.dark-mode .card-total .card-icon { background: linear-gradient(135deg, var(--primary-dark), var(--accent-dark)); }
+
+.card-income .card-icon { background: linear-gradient(135deg, #10B981, #34D399); }
+.card-expense .card-icon { background: linear-gradient(135deg, var(--secondary-light), #EF4444); }
+.dark-mode .card-expense .card-icon { background: linear-gradient(135deg, var(--secondary-dark), #F87171); }
+
+.card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary-light);
+}
+.dark-mode .card-value { color: var(--text-primary-dark); }
+
+.card-label {
+    color: var(--text-secondary-light);
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
+}
+.dark-mode .card-label { color: var(--text-secondary-dark); }
+
+/* Transactions Section */
+.transactions-section {
+    background-color: var(--surface-light);
+    border: 1px solid var(--border-light);
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+.dark-mode .transactions-section {
+    background-color: var(--surface-dark);
+    border-color: var(--border-dark);
+}
+
+.section-header h2 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary-light);
+}
+.dark-mode .section-header h2 { color: var(--text-primary-dark); }
+
+.transactions-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.transactions-table th {
+    padding: 1rem;
+    text-align: left;
+    color: var(--text-secondary-light);
+    border-bottom: 2px solid var(--border-light);
+    font-weight: 600;
+}
+.dark-mode .transactions-table th {
+    color: var(--text-secondary-dark);
+    border-bottom-color: var(--border-dark);
+}
+
+.transactions-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-primary-light);
+}
+.dark-mode .transactions-table td {
+    border-bottom-color: var(--border-dark);
+    color: var(--text-primary-dark);
+}
+
+.btn-secondary-custom {
+    background-color: transparent;
+    color: var(--text-primary-light);
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--border-light);
+    border-radius: 0.5rem;
+    transition: all 0.3s;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    text-decoration: none;
+}
+.dark-mode .btn-secondary-custom {
+    color: var(--text-primary-dark);
+    border-color: var(--border-dark);
+}
+.btn-secondary-custom:hover {
+    background-color: var(--bg-light);
+}
+.dark-mode .btn-secondary-custom:hover {
+    background-color: var(--bg-dark);
+}
+
+.badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-income-category {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-expense-category {
+    background-color: rgba(139, 92, 246, 0.1);
+    color: #8B5CF6;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-income {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #10B981;
+}
+
+.badge-expense {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: #EF4444;
+}
+
+.text-success {
+    color: #10B981;
+}
+
+.text-danger {
+    color: #EF4444;
+}
+
+.btn-link {
+    color: var(--primary-light);
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.dark-mode .btn-link {
+    color: var(--primary-dark);
+}
+.btn-link:hover {
+    text-decoration: underline;
+}
+
+.no-data td {
+    text-align: center;
+    padding: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .balance-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+}

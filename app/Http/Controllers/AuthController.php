@@ -48,14 +48,13 @@ class AuthController extends Controller
             'password' => 'required'
         ]);
 
-        // Attempt to log in [cite: 15]
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate(); // Prevent Session Fixation attacks
+            $request->session()->regenerate();
             
-            // Set session locale based on user preference from DB
             session(['locale' => Auth::user()->preferred_language]);
 
-            return redirect()->intended('transactions');
+            // CHANGED: Redirect to dashboard
+            return redirect()->intended('dashboard');
         }
 
         return back()->withErrors(['email' => 'Invalid credentials.']);
