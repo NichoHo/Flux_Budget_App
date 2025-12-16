@@ -7,17 +7,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/login.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
     <nav class="navbar fixed-top">
         <div class="container">
-            <a class="navbar-brand" href="{{ url('/') }}">
+            <a class="navbar-brand d-flex align-items-center" href="{{ url('/') }}">
                 <img src="{{ asset('images/logo.png') }}" 
                     alt="Flux Logo" 
-                    style="height: 30px; width: auto; margin-right: 8px; vertical-align: middle; padding-bottom: 3px;">
-                Flux
+                    style="height: 32px; width: auto; margin-right: 10px;">
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 700; letter-spacing: -0.02em; font-size: 1.5rem;">flux</span>
             </a>
+
             <div class="d-flex align-items-center">
                 <a href="{{ route('lang.switch', app()->getLocale() == 'en' ? 'id' : 'en') }}" class="lang-toggle" title="Switch Language">
                     <i class="fas fa-globe"></i>

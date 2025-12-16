@@ -1,27 +1,33 @@
 :root {
     --bg-light: #F8FAFC;
     --surface-light: #FFFFFF;
-    --primary-light: #004AAD;
-    --secondary-light: #D62828;
-    --accent-light: #00B4D8;
-    --text-primary-light: #1E293B;
-    --text-secondary-light: #475569;
+    
+    /* NEW FLUX PALETTE */
+    --primary-light: #0D9488; /* Teal 600 */
+    --secondary-light: #0891B2; /* Cyan 600 */
+    --accent-light: #14B8A6; /* Teal 500 */
+    
+    --text-primary-light: #0F172A; /* Slate 900 */
+    --text-secondary-light: #475569; /* Slate 600 */
     --border-light: #E2E8F0;
     
-    --bg-dark: #0B1221;
-    --surface-dark: #1A2235;
-    --primary-dark: #4C8EF7;
-    --secondary-dark: #FF5C5C;
-    --accent-dark: #4FD1C5;
-    --text-primary-dark: #E2E8F0;
+    /* DARK MODE PALETTE */
+    --bg-dark: #020617; /* Deep Slate 950 */
+    --surface-dark: #0F172A; /* Slate 900 */
+    
+    --primary-dark: #2DD4BF; /* Teal 400 */
+    --secondary-dark: #22D3EE; /* Cyan 400 */
+    --accent-dark: #5EEAD4; /* Teal 300 */
+    
+    --text-primary-dark: #F1F5F9;
     --text-secondary-dark: #94A3B8;
-    --border-dark: #334155;
+    --border-dark: #1E293B;
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Outfit', sans-serif; /* UPDATED FONT */
     background-color: var(--bg-light);
     color: var(--text-primary-light);
     transition: background-color 0.3s, color 0.3s;
@@ -33,13 +39,13 @@ body.dark-mode {
     color: var(--text-primary-dark);
 }
 
-h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
+h1, h2, h3 { font-family: 'Outfit', sans-serif; }
 
 /* Navbar */
 .navbar {
     background-color: var(--surface-light);
     border-bottom: 1px solid var(--border-light);
-    padding: 1.25rem 0;
+    padding: 1rem 0;
     transition: all 0.3s;
 }
 
@@ -51,16 +57,16 @@ h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
 .navbar-brand {
     font-size: 1.5rem;
     font-weight: 700;
-    color: var(--primary-light);
+    color: var(--text-primary-light);
     text-decoration: none;
 }
 
-.dark-mode .navbar-brand { color: var(--primary-dark); }
+.dark-mode .navbar-brand { color: var(--text-primary-dark); }
 
 .theme-toggle, .lang-toggle {
     background: none;
     border: none;
-    color: var(--text-primary-light);
+    color: var(--text-secondary-light);
     font-size: 1.25rem;
     cursor: pointer;
     transition: color 0.3s;
@@ -68,17 +74,17 @@ h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
     text-decoration: none;
 }
 
-.dark-mode .theme-toggle, .dark-mode .lang-toggle { color: var(--text-primary-dark); }
+.dark-mode .theme-toggle, .dark-mode .lang-toggle { color: var(--text-secondary-dark); }
 .theme-toggle:hover, .lang-toggle:hover { color: var(--primary-light); }
 .dark-mode .theme-toggle:hover, .dark-mode .lang-toggle:hover { color: var(--primary-dark); }
 
 /* Sign Up Section */
 .signup-section {
-    min-height: calc(100vh - 80px);
+    min-height: calc(100vh - 70px);
     display: flex;
     align-items: center;
     padding: 3rem 0;
-    margin-top: 80px;
+    margin-top: 70px;
 }
 
 .signup-container { max-width: 500px; margin: 0 auto; }
@@ -103,6 +109,7 @@ h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
     font-weight: 700;
     color: var(--text-primary-light);
     margin-bottom: 0.5rem;
+    letter-spacing: -0.02em;
 }
 
 .dark-mode .signup-header h1 { color: var(--text-primary-dark); }
@@ -141,7 +148,8 @@ h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
 .form-control:focus, .form-select:focus {
     background-color: var(--surface-light);
     border-color: var(--primary-light);
-    box-shadow: 0 0 0 3px rgba(0, 74, 173, 0.1);
+    /* Updated glow to teal */
+    box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.1); 
     color: var(--text-primary-light);
     outline: none;
 }
@@ -149,25 +157,25 @@ h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
 .dark-mode .form-control:focus, .dark-mode .form-select:focus {
     background-color: var(--surface-dark);
     border-color: var(--primary-dark);
-    box-shadow: 0 0 0 3px rgba(76, 142, 247, 0.1);
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.1);
     color: var(--text-primary-dark);
 }
 
 .is-invalid {
-    border-color: var(--secondary-light) !important;
+    border-color: #EF4444 !important; /* Red for errors is still standard */
 }
 .dark-mode .is-invalid {
-    border-color: var(--secondary-dark) !important;
+    border-color: #F87171 !important;
 }
 
 .invalid-feedback {
     display: block;
-    color: var(--secondary-light);
+    color: #EF4444;
     font-size: 0.875rem;
     margin-top: 0.25rem;
 }
 .dark-mode .invalid-feedback {
-    color: var(--secondary-dark);
+    color: #F87171;
 }
 
 .password-input-wrapper { position: relative; }
@@ -188,9 +196,9 @@ h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
 .password-toggle:hover { color: var(--primary-light); }
 .dark-mode .password-toggle:hover { color: var(--primary-dark); }
 
-/* Button */
+/* Button - Updated Gradient */
 .btn-primary-custom {
-    background-color: var(--primary-light);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
     color: white;
     padding: 0.875rem 2rem;
     font-weight: 600;
@@ -202,21 +210,20 @@ h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
 }
 
 .btn-primary-custom:hover {
-    background-color: #003a8c;
+    filter: brightness(110%);
     transform: translateY(-2px);
-    box-shadow: 0 8px 16px rgba(0, 74, 173, 0.3);
+    box-shadow: 0 8px 16px rgba(13, 148, 136, 0.2);
     color: white;
 }
 
 .dark-mode .btn-primary-custom {
-    background-color: var(--primary-dark);
-    color: var(--surface-dark);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+    color: white;
 }
 
 .dark-mode .btn-primary-custom:hover {
-    background-color: #6BA3FF;
-    box-shadow: 0 8px 16px rgba(76, 142, 247, 0.3);
-    color: var(--surface-dark);
+    box-shadow: 0 8px 16px rgba(45, 212, 191, 0.2);
+    color: white;
 }
 
 /* Divider */
@@ -273,11 +280,13 @@ h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
 .btn-social:hover {
     border-color: var(--primary-light);
     background-color: var(--bg-light);
+    color: var(--primary-light);
 }
 
 .dark-mode .btn-social:hover {
     border-color: var(--primary-dark);
     background-color: var(--bg-dark);
+    color: var(--primary-dark);
 }
 
 /* Footer */
@@ -292,7 +301,7 @@ h1, h2, h3 { font-family: 'Plus Jakarta Sans', sans-serif; }
 .signup-footer a {
     color: var(--primary-light);
     text-decoration: none;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .dark-mode .signup-footer a { color: var(--primary-dark); }

@@ -7,47 +7,59 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
+       /* UPDATED: New Teal/Cyan Gradients to match the Logo */
        .hero {
-            background: linear-gradient(135deg, rgba(0, 74, 173, 0.9) 0%, rgba(0, 180, 216, 0.85) 100%), 
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(13, 148, 136, 0.85) 100%), 
                         url("{{ asset('images/finance.jpg') }}");
             background-size: cover;
             background-position: center;
        }
        .dark-mode .hero {
-            background: linear-gradient(135deg, rgba(76, 142, 247, 0.95) 0%, rgba(79, 209, 197, 0.9) 100%),
+            background: linear-gradient(135deg, rgba(2, 6, 23, 0.95) 0%, rgba(17, 94, 89, 0.9) 100%),
                         url("{{ asset('images/finance.jpg') }}");
             background-size: cover;
             background-position: center;
        }
        .cta {
-            background: linear-gradient(135deg, rgba(0, 74, 173, 0.9) 0%, rgba(0, 180, 216, 0.85) 100%), 
+            background: linear-gradient(135deg, rgba(13, 148, 136, 0.9) 0%, rgba(6, 182, 212, 0.85) 100%), 
                         url("{{ asset('images/graph.webp') }}");
             background-size: cover;
             background-position: center;
        }
        .dark-mode .cta {
-            background: linear-gradient(135deg, rgba(76, 142, 247, 0.95) 0%, rgba(79, 209, 197, 0.9) 100%),
+            background: linear-gradient(135deg, rgba(15, 118, 110, 0.95) 0%, rgba(8, 145, 178, 0.9) 100%),
                         url("{{ asset('images/graph.webp') }}");
             background-size: cover;
             background-position: center;
+       }
+
+       /* --- NEW NAVBAR STYLES FOR HIDING ON SCROLL --- */
+       .navbar {
+           /* Add transform to the transition list */
+           transition: transform 0.3s ease-in-out, background-color 0.3s, box-shadow 0.3s !important;
+       }
+       
+       /* Class added via JS to hide navbar */
+       .navbar-hidden {
+           transform: translateY(-100%);
+           box-shadow: none;
        }
     </style>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg fixed-top">
         <div class="container">
-            <!-- Logo on far left -->
-            <a class="navbar-brand" href="#">
+            <a class="navbar-brand d-flex align-items-center" href="#">
                 <img src="{{ asset('images/logo.png') }}" 
                     alt="Flux Logo" 
-                    style="height: 30px; width: auto; margin-right: 8px; vertical-align: middle; padding-bottom: 3px;">
-                Flux
+                    style="height: 32px; width: auto; margin-right: 10px;">
+                <span style="font-family: 'Outfit', sans-serif; font-weight: 700; letter-spacing: -0.02em; font-size: 1.5rem;">flux</span>
             </a>
 
-            <!-- Navigation links in center - hidden on mobile -->
             <div class="d-none d-lg-block">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
@@ -65,9 +77,7 @@
                 </ul>
             </div>
 
-            <!-- Right section with buttons and toggles -->
             <div class="d-flex align-items-center">
-                <!-- Language and theme toggles -->
                 <a href="{{ route('lang.switch', app()->getLocale() == 'en' ? 'id' : 'en') }}" class="lang-toggle" title="Switch Language">
                     <i class="fas fa-globe"></i>
                 </a>
@@ -76,10 +86,8 @@
                     <i class="fas fa-cloud-moon"></i>
                 </button>
 
-                <!-- Divider -->
                 <div class="divider d-md-block"></div>
 
-                <!-- Auth buttons -->
                 @auth
                     <a class="btn-primary-custom btn-nav ms-0 ms-md-2" href="{{ route('transactions.index') }}">{{ __('nav_dashboard') }}</a>
                 @else
@@ -316,9 +324,6 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // CLEANED UP JAVASCRIPT
-        // Removed translation logic because Laravel handles it now.
-
         // Dark mode
         const themeToggle = document.getElementById('themeToggle');
         const body = document.body;
@@ -336,14 +341,33 @@
             themeToggle.innerHTML = isDarkMode ? '<i class="fas fa-cloud-sun"></i>' : '<i class="fas fa-cloud-moon"></i>';
         });
 
-        // Navbar scroll effect
+        // --- UPDATED: Navbar Smart Scroll (Hide down, Show up) ---
         const navbar = document.querySelector('.navbar');
+        let lastScrollTop = 0;
+        
         window.addEventListener('scroll', () => {
-            if (window.scrollY > 20) {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Prevent negative scrolling values (e.g. mobile rubber-banding)
+            if (scrollTop < 0) scrollTop = 0;
+
+            // 1. Handle Background styling (Existing logic)
+            if (scrollTop > 20) {
                 navbar.classList.add('scrolled');
             } else {
                 navbar.classList.remove('scrolled');
             }
+
+            // 2. Handle Hide/Show logic
+            // If we are scrolling DOWN and we are past the initial top area (e.g. 60px)
+            if (scrollTop > lastScrollTop && scrollTop > 60) {
+                navbar.classList.add('navbar-hidden');
+            } else {
+                // We are scrolling UP
+                navbar.classList.remove('navbar-hidden');
+            }
+            
+            lastScrollTop = scrollTop;
         });
 
         // Smooth scrolling

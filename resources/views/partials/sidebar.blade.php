@@ -2,12 +2,11 @@
     <div class="sidebar-brand">
         <img src="{{ asset('images/logo.png') }}" 
             alt="Flux Logo" 
-            style="height: 30px; width: auto; vertical-align: middle;">
-        Flux
+            style="height: 32px; width: auto; vertical-align: middle;">
+        <span style="font-family: 'Outfit', sans-serif; font-weight: 700; letter-spacing: -0.02em; font-size: 1.5rem;">flux</span>
     </div>
 
     <ul class="sidebar-menu">
-        <!-- Dashboard Link -->
         <li class="menu-item {{ request()->routeIs('dashboard') ? 'active' : '' }}">
             <a href="{{ route('dashboard') }}">
                 <i class="fas fa-home"></i>
@@ -15,7 +14,6 @@
             </a>
         </li>
         
-        <!-- Transactions Link -->
         <li class="menu-item {{ request()->routeIs('transactions.*') ? 'active' : '' }}">
             <a href="{{ route('transactions.index') }}">
                 <i class="fas fa-exchange-alt"></i>
@@ -23,7 +21,6 @@
             </a>
         </li>
 
-        <!-- Analytics Link -->
         <li class="menu-item {{ request()->routeIs('analytics.*') ? 'active' : '' }}">
             <a href="{{ route('analytics') }}">
                 <i class="fas fa-chart-pie"></i>
@@ -31,7 +28,6 @@
             </a>
         </li>
         
-        <!-- Settings Link -->
         <li class="menu-item {{ request()->routeIs('settings') ? 'active' : '' }}">
             <a href="{{ route('settings') }}">
                 <i class="fas fa-cog"></i>
@@ -41,7 +37,6 @@
     </ul>
 
     <div class="sidebar-footer">
-        <!-- Logout Form -->
         <form action="{{ route('logout') }}" method="POST">
             @csrf
             <button type="submit" class="btn-logout-full">
