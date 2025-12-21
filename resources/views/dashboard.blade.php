@@ -23,7 +23,10 @@
             <i class="fas fa-coins"></i> 
             <span>{{ $currentCurrency == 'USD' ? 'USD ($)' : 'IDR (Rp)' }}</span>
         </a>
-        <!-- Removed dark mode button as requested -->
+        <a href="{{ route('transactions.create') }}" class="btn-primary-custom">
+            <i class="fas fa-plus"></i>
+            <span>{{ __('index_add_transaction') }}</span>
+        </a>
     </div>
 </div>
 
