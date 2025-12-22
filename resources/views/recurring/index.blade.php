@@ -141,6 +141,7 @@
                     <td>
                         @php
                             $daysUntil = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($bill->next_payment_date), false);
+                            $daysUntil = (int)$daysUntil;
                         @endphp
                         @if($daysUntil < 0)
                             <span class="days-badge overdue">Overdue</span>

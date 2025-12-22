@@ -1,17 +1,18 @@
 @extends('app')
 
-@section('title', 'Recurring Bills - Flux')
+@section('title', __('analytics_title') . ' - Flux')
 
 @section('styles')
-    <link rel="stylesheet" href="{{ asset('css/recurring.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/analytics.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 @endsection
 
 @section('content')
 
-<div class="recurring-header">
+<div class="analytics-header">
     <div class="header-content">
-        <h1>Recurring Bills</h1>
-        <p>Manage your automatic recurring income and expenses</p>
+        <h1>{{ __('analytics_title') }}</h1>
+        <p>{{ __('analytics_subtitle') }}</p>
     </div>
     <div class="header-actions">
         <a href="{{ route('currency.switch', $currentCurrency == 'USD' ? 'IDR' : 'USD') }}" class="btn-secondary-custom">
@@ -19,203 +20,441 @@
             <span>{{ $currentCurrency == 'USD' ? 'USD ($)' : 'IDR (Rp)' }}</span>
         </a>
         
-        <a href="{{ route('recurring.create') }}" class="btn-primary-custom">
-            <i class="fas fa-plus"></i>
-            <span>Add Recurring Bill</span>
+        <a href="{{ route('analytics.export') }}" class="btn-primary-custom">
+            <i class="fas fa-file-download"></i>
+            <span>{{ __('Export Report') }}</span>
         </a>
     </div>
 </div>
 
-@if(session('success'))
-    <div class="alert-success">
-        <i class="fas fa-check-circle"></i> {{ session('success') }}
+@if($totalIncome == 0 && $totalExpense == 0)
+<div class="empty-state">
+    <div class="empty-icon">
+        <i class="fas fa-chart-pie"></i>
     </div>
-@endif
-
-<div class="recurring-stats">
-    <div class="stat-card stat-income">
-        <div class="stat-icon">
-            <i class="fas fa-arrow-down"></i>
-        </div>
-        <div class="stat-content">
-            <p class="stat-label">Monthly Income</p>
-            <p class="stat-value">
-                @php
-                    $monthlyIncome = $bills->where('type', 'income')->where('frequency', 'monthly')->sum('amount');
-                    $weeklyIncome = $bills->where('type', 'income')->where('frequency', 'weekly')->sum('amount') * 4.33;
-                    $yearlyIncome = $bills->where('type', 'income')->where('frequency', 'yearly')->sum('amount') / 12;
-                    $totalIncome = $monthlyIncome + $weeklyIncome + $yearlyIncome;
-                @endphp
-                @if($currentCurrency == 'IDR')
-                    Rp {{ number_format($totalIncome, 0, ',', '.') }}
-                @else
-                    $ {{ number_format($totalIncome / $exchangeRate['rate'], 2, '.', ',') }}
-                @endif
-            </p>
-        </div>
-    </div>
-    
-    <div class="stat-card stat-expense">
-        <div class="stat-icon">
+    <h3 class="empty-title">{{ __('analytics_no_data_title') }}</h3>
+    <p class="empty-message">{{ __('analytics_no_data_message') }}</p>
+    <a href="{{ route('transactions.create') }}" class="btn-primary-custom">
+        <i class="fas fa-plus"></i>
+        <span>{{ __('analytics_add_first_transaction') }}</span>
+    </a>
+</div>
+@else
+<div class="stats-cards">
+    <div class="stat-card">
+        <div class="stat-icon income">
             <i class="fas fa-arrow-up"></i>
         </div>
         <div class="stat-content">
-            <p class="stat-label">Monthly Expenses</p>
-            <p class="stat-value">
-                @php
-                    $monthlyExpense = $bills->where('type', 'expense')->where('frequency', 'monthly')->sum('amount');
-                    $weeklyExpense = $bills->where('type', 'expense')->where('frequency', 'weekly')->sum('amount') * 4.33;
-                    $yearlyExpense = $bills->where('type', 'expense')->where('frequency', 'yearly')->sum('amount') / 12;
-                    $totalExpense = $monthlyExpense + $weeklyExpense + $yearlyExpense;
-                @endphp
+            <div class="stat-value">
                 @if($currentCurrency == 'IDR')
-                    Rp {{ number_format($totalExpense, 0, ',', '.') }}
+                    Rp {{ number_format($totalIncome, 0, ',', '.') }}
                 @else
-                    $ {{ number_format($totalExpense / $exchangeRate['rate'], 2, '.', ',') }}
+                    $ {{ number_format($totalIncome, 2, '.', ',') }}
                 @endif
-            </p>
+            </div>
+            <div class="stat-label">{{ __('analytics_total_income') }}</div>
         </div>
     </div>
     
-    <div class="stat-card stat-total">
-        <div class="stat-icon">
-            <i class="fas fa-calendar-check"></i>
+    <div class="stat-card">
+        <div class="stat-icon expense">
+            <i class="fas fa-arrow-down"></i>
         </div>
         <div class="stat-content">
-            <p class="stat-label">Active Bills</p>
-            <p class="stat-value">{{ $bills->where('is_active', true)->count() }}</p>
+            <div class="stat-value">
+                @if($currentCurrency == 'IDR')
+                    Rp {{ number_format($totalExpense, 0, ',', '.') }}
+                @else
+                    $ {{ number_format($totalExpense, 2, '.', ',') }}
+                @endif
+            </div>
+            <div class="stat-label">{{ __('analytics_total_expense') }}</div>
+        </div>
+    </div>
+    
+    <div class="stat-card">
+        <div class="stat-icon balance">
+            <i class="fas fa-wallet"></i>
+        </div>
+        <div class="stat-content">
+            <div class="stat-value">
+                @if($currentCurrency == 'IDR')
+                    Rp {{ number_format($netBalance, 0, ',', '.') }}
+                @else
+                    $ {{ number_format($netBalance, 2, '.', ',') }}
+                @endif
+            </div>
+            <div class="stat-label">{{ __('analytics_net_balance') }}</div>
+            @if($totalIncome > 0)
+            <div class="stat-trend {{ $netBalance >= 0 ? 'trend-up' : 'trend-down' }}">
+                <i class="fas fa-{{ $netBalance >= 0 ? 'arrow-up' : 'arrow-down' }}"></i>
+                <span>{{ round(($netBalance / $totalIncome) * 100, 1) }}% {{ __('analytics_of_income') }}</span>
+            </div>
+            @endif
         </div>
     </div>
 </div>
 
-<div class="recurring-section">
-    @if($bills->count() > 0)
-    <div class="table-responsive">
-        <table class="recurring-table">
-            <thead>
-                <tr>
-                    <th width="17%">Description</th>
-                    <th width="5%">Type</th>
-                    <th width="10%">Category</th>
-                    <th width="10%">Frequency</th>
-                    <th width="18%">Next Due</th>
-                    <th width="10%">Due In</th>
-                    <th width="14%">Amount</th>
-                    <th width="8%">Status</th>
-                    <th width="8%"></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($bills as $bill)
-                <tr class="{{ !$bill->is_active ? 'inactive-row' : '' }}">
-                    <td>
-                        <div class="bill-description">
-                            <span class="fw-bold">{{ $bill->description }}</span>
-                        </div>
-                    </td>
-                    <td>
-                        <span class="badge {{ $bill->type == 'income' ? 'badge-income' : 'badge-expense' }}">
-                            {{ ucfirst($bill->type) }}
-                        </span>
-                    </td>
-                    <td>
-                        @if($bill->category)
-                            <span class="badge badge-category">
-                                {{ $bill->category }}
-                            </span>
-                        @else
-                            <span class="text-secondary opacity-50">-</span>
-                        @endif
-                    </td>
-                    <td>
-                        <span class="frequency-badge frequency-{{ $bill->frequency }}">
-                            <i class="fas fa-{{ $bill->frequency == 'weekly' ? 'calendar-week' : ($bill->frequency == 'monthly' ? 'calendar-alt' : 'calendar') }}"></i>
-                            {{ ucfirst($bill->frequency) }}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="fw-bold date">
-                            {{ \Carbon\Carbon::parse($bill->next_payment_date)->format('M d, Y') }}
-                        </span>
-                    </td>
-                    <td>
-                        @php
-                            // FIX: Force integer cast (int) and use startOfDay() to ignore time components
-                            $daysUntil = (int) \Carbon\Carbon::now()->startOfDay()->diffInDays(\Carbon\Carbon::parse($bill->next_payment_date)->startOfDay(), false);
-                        @endphp
-                        
-                        @if($daysUntil < 0)
-                            <span class="days-badge overdue">Overdue</span>
-                        @elseif($daysUntil == 0)
-                            <span class="days-badge today">Today</span>
-                        @elseif($daysUntil <= 7)
-                            <span class="days-badge soon">{{ number_format($daysUntil, 0) }}d</span>
-                        @else
-                            <span class="days-badge normal">{{ number_format($daysUntil, 0) }}d</span>
-                        @endif
-                    </td>
-                    <td class="{{ $bill->type == 'income' ? 'text-success' : 'text-danger' }} fw-bold">
-                        @if($currentCurrency == 'IDR')
-                            Rp {{ number_format($bill->amount, 0, ',', '.') }}
-                        @else
-                            $ {{ number_format($bill->amount / $exchangeRate['rate'], 2, '.', ',') }}
-                        @endif
-                    </td>
-                    <td>
-                        @if($bill->is_active)
-                            <span class="fw-bold text-success">Active</span>
-                        @else
-                            <span class="fw-bold text-secondary">Inactive</span>
-                        @endif
-                    </td>
-                    <td class="text-end">
-                        <div class="action-buttons">
-                            {{-- Pay Now Button for Overdue/Due Today items --}}
-                            @php
-                                $isDue = \Carbon\Carbon::now()->startOfDay()->gte(\Carbon\Carbon::parse($bill->next_payment_date));
-                            @endphp
-                            
-                            @if($isDue && $bill->is_active)
-                            <form action="{{ route('recurring.pay', $bill->id) }}" method="POST" style="display: inline;">
-                                @csrf
-                                <button type="submit" class="btn-edit text-success" style="margin-right: 5px;" title="Pay Now">
-                                    <i class="fas fa-check"></i>
-                                </button>
-                            </form>
-                            @endif
-
-                            <a href="{{ route('recurring.edit', $bill->id) }}" class="btn-edit" title="Edit">
-                                <i class="fas fa-pencil-alt"></i>
-                            </a>
-                            <form action="{{ route('recurring.destroy', $bill->id) }}" method="POST" style="display: inline;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to stop this recurring bill?')" title="Delete">
-                                    <i class="fas fa-trash-alt"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </td>
-                </tr>
-                @endforeach
-            </tbody>
-        </table>
+<div class="charts-section">
+    <h2 style="margin-bottom: 1rem;">{{ __('analytics_visualizations') }}</h2>
+    <p style="color: var(--text-secondary-light); font-size: 0.875rem; margin-bottom: 1rem;">
+        {{ __('analytics_visualizations_subtitle') }}
+    </p>
+    
+    <div class="charts-grid">
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">{{ __('analytics_monthly_trend') }}</h3>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="monthlyTrendChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3 class="chart-title">{{ __('analytics_expense_categories') }}</h3>
+            </div>
+            <div class="chart-wrapper">
+                <canvas id="categoryChart"></canvas>
+            </div>
+        </div>
     </div>
-    @else
-    <div class="no-data">
-        <i class="fas fa-calendar-times"></i>
-        <p>No recurring bills found</p>
-    </div>
-    @endif
 </div>
 
-@if($bills->count() > 0)
-<div class="text-center mt-4">
-    <a href="{{ route('dashboard') }}" class="btn-secondary-custom" style="width: 100%; justify-content: center;">
-        <i class="fas fa-arrow-left"></i>
-        <span>Back to Dashboard</span>
-    </a>
+<div class="insights-grid">
+    <div class="insight-card">
+        <div class="insight-header">
+            <div class="insight-icon category">
+                <i class="fas fa-tags"></i>
+            </div>
+            <h3 class="insight-title">{{ __('analytics_expense_breakdown') }}</h3>
+        </div>
+        <ul class="insight-list">
+            @forelse($expenseCategories as $category)
+            <li class="insight-item">
+                <span class="insight-label">{{ $category['category'] }}</span>
+                <div style="display: flex; align-items: center; gap: 0.75rem;">
+                    <span class="insight-value">
+                        @if($currentCurrency == 'IDR')
+                            Rp {{ number_format($category['amount'], 0, ',', '.') }}
+                        @else
+                            $ {{ number_format($category['amount'], 2, '.', ',') }}
+                        @endif
+                    </span>
+                    <span class="insight-percentage">{{ $category['percentage'] }}%</span>
+                </div>
+            </li>
+            @empty
+            <li class="insight-item">
+                <span class="insight-label">{{ __('analytics_no_categories') }}</span>
+                <span class="insight-value text-muted">-</span>
+            </li>
+            @endforelse
+        </ul>
+    </div>
+    
+    <div class="insight-card">
+        <div class="insight-header">
+            <div class="insight-icon sources">
+                <i class="fas fa-money-bill-wave"></i>
+            </div>
+            <h3 class="insight-title">{{ __('analytics_income_sources') }}</h3>
+        </div>
+        <ul class="insight-list">
+            @forelse($incomeSources as $source)
+            <li class="insight-item">
+                <span class="insight-label">{{ $source['source'] }}</span>
+                <span class="insight-value">
+                    @if($currentCurrency == 'IDR')
+                        Rp {{ number_format($source['amount'], 0, ',', '.') }}
+                    @else
+                        $ {{ number_format($source['amount'], 2, '.', ',') }}
+                    @endif
+                </span>
+            </li>
+            @empty
+            <li class="insight-item">
+                <span class="insight-label">{{ __('analytics_no_income_sources') }}</span>
+                <span class="insight-value text-muted">-</span>
+            </li>
+            @endforelse
+        </ul>
+    </div>
+    
+    <div class="insight-card">
+        <div class="insight-header">
+            <div class="insight-icon" style="background-color: #e0e7ff; color: #4338ca;">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3 class="insight-title">Recurring Obligations</h3>
+        </div>
+        <div style="margin-bottom: 1rem;">
+            <p class="text-muted" style="font-size: 0.9em; margin-bottom: 0.5rem;">Est. Monthly Fixed Cost</p>
+            <h2 style="font-size: 1.5rem; color: #1f2937;">
+                @if($currentCurrency == 'IDR')
+                    Rp {{ number_format($totalRecurringMonthly, 0, ',', '.') }}
+                @else
+                    $ {{ number_format($totalRecurringMonthly, 2, '.', ',') }}
+                @endif
+            </h2>
+        </div>
+        <ul class="insight-list">
+            <li class="insight-item">
+                <span class="insight-label">Yearly Projection</span>
+                <span class="insight-value">
+                    @if($currentCurrency == 'IDR')
+                        Rp {{ number_format($totalRecurringMonthly * 12, 0, ',', '.') }}
+                    @else
+                        $ {{ number_format($totalRecurringMonthly * 12, 2, '.', ',') }}
+                    @endif
+                </span>
+            </li>
+            @if(count($monthlyData) > 0)
+            <li class="insight-item">
+                <span class="insight-label">Discretionary (Avg)</span>
+                @php 
+                    $avgIncome = collect($monthlyData)->avg('income'); 
+                @endphp
+                <span class="insight-value text-success">
+                    @if($currentCurrency == 'IDR')
+                        Rp {{ number_format(max(0, $avgIncome - $totalRecurringMonthly), 0, ',', '.') }}
+                    @else
+                        $ {{ number_format(max(0, $avgIncome - $totalRecurringMonthly), 2, '.', ',') }}
+                    @endif
+                </span>
+            </li>
+            @endif
+        </ul>
+    </div>
+
+    <div class="insight-card">
+        <div class="insight-header">
+            <div class="insight-icon trends">
+                <i class="fas fa-chart-line"></i>
+            </div>
+            <h3 class="insight-title">{{ __('analytics_spending_trends') }}</h3>
+        </div>
+        <ul class="insight-list">
+            <li class="insight-item">
+                <span class="insight-label">{{ __('analytics_current_month') }}</span>
+                <span class="insight-value">
+                    @if($currentCurrency == 'IDR')
+                        Rp {{ number_format($spendingTrends['current_month'], 0, ',', '.') }}
+                    @else
+                        $ {{ number_format($spendingTrends['current_month'], 2, '.', ',') }}
+                    @endif
+                </span>
+            </li>
+            <li class="insight-item">
+                <span class="insight-label">{{ __('analytics_last_month') }}</span>
+                <span class="insight-value">
+                    @if($currentCurrency == 'IDR')
+                        Rp {{ number_format($spendingTrends['last_month'], 0, ',', '.') }}
+                    @else
+                        $ {{ number_format($spendingTrends['last_month'], 2, '.', ',') }}
+                    @endif
+                </span>
+            </li>
+            <li class="insight-item">
+                <span class="insight-label">{{ __('analytics_month_over_month') }}</span>
+                <span class="insight-value {{ $spendingTrends['month_over_month_change'] >= 0 ? 'trend-up' : 'trend-down' }}">
+                    <i class="fas fa-{{ $spendingTrends['month_over_month_change'] >= 0 ? 'arrow-up' : 'arrow-down' }}"></i>
+                    {{ abs($spendingTrends['month_over_month_change']) }}%
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="recommendations-section">
+    <h2 style="margin-bottom: 1rem;">{{ __('analytics_recommendations') }}</h2>
+    <p style="color: var(--text-secondary-light); font-size: 0.875rem; margin-bottom: 1rem;">
+        {{ __('analytics_recommendations_subtitle') }}
+    </p>
+    
+    <div class="recommendations-grid">
+        @foreach($recommendations as $rec)
+        <div class="recommendation-card {{ $rec['type'] }}">
+            <div class="recommendation-header">
+                <i class="fas fa-{{ $rec['icon'] }} recommendation-icon {{ $rec['type'] }}"></i>
+                <h4 class="recommendation-title">{{ $rec['title'] }}</h4>
+            </div>
+            <p class="recommendation-message">{{ $rec['message'] }}</p>
+            <div class="recommendation-action">
+                <i class="fas fa-lightbulb"></i>
+                <span>{{ $rec['action'] }}</span>
+            </div>
+        </div>
+        @endforeach
+    </div>
 </div>
 @endif
 
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    @if($totalIncome > 0 || $totalExpense > 0)
+    // Monthly Trend Chart
+    const monthlyCtx = document.getElementById('monthlyTrendChart').getContext('2d');
+    if (monthlyCtx) {
+        new Chart(monthlyCtx, {
+            type: 'line',
+            data: {
+                labels: @json($chartData['monthlyLabels']),
+                datasets: [
+                    {
+                        label: '{{ __("analytics_income") }}',
+                        data: @json($chartData['monthlyIncome']),
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    },
+                    {
+                        label: '{{ __("analytics_expense") }}',
+                        data: @json($chartData['monthlyExpense']),
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                    label += new Intl.NumberFormat('id-ID', {
+                                        style: 'currency',
+                                        currency: '{{ $currentCurrency }}',
+                                        minimumFractionDigits: {{ $currentCurrency == 'IDR' ? 0 : 2 }}
+                                    }).format(context.parsed.y);
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return new Intl.NumberFormat('id-ID', {
+                                    style: 'currency',
+                                    currency: '{{ $currentCurrency }}',
+                                    minimumFractionDigits: {{ $currentCurrency == 'IDR' ? 0 : 2 }}
+                                }).format(value);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Category Chart
+    const categoryCtx = document.getElementById('categoryChart').getContext('2d');
+    if (categoryCtx) {
+        new Chart(categoryCtx, {
+            type: 'doughnut',
+            data: {
+                labels: @json($chartData['categoryLabels']),
+                datasets: [{
+                    data: @json($chartData['categoryAmounts']),
+                    backgroundColor: [
+                        '#8B5CF6', '#F59E0B', '#10B981', '#3B82F6', 
+                        '#EC4899', '#6B7280', '#EF4444', '#F97316',
+                        '#0EA5E9', '#84CC16'
+                    ],
+                    borderWidth: 2,
+                    borderColor: 'var(--surface-light)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${new Intl.NumberFormat('id-ID', {
+                                    style: 'currency',
+                                    currency: '{{ $currentCurrency }}',
+                                    minimumFractionDigits: {{ $currentCurrency == 'IDR' ? 0 : 2 }}
+                                }).format(value)} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Income Sources Chart
+    const incomeSourcesCtx = document.getElementById('incomeSourcesChart')?.getContext('2d');
+    if (incomeSourcesCtx) {
+        new Chart(incomeSourcesCtx, {
+            type: 'pie',
+            data: {
+                labels: @json($chartData['incomeSourceLabels']),
+                datasets: [{
+                    data: @json($chartData['incomeSourceAmounts']),
+                    backgroundColor: [
+                        '#10B981', '#34D399', '#065F46', '#059669', '#047857'
+                    ],
+                    borderWidth: 2,
+                    borderColor: 'var(--surface-light)'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${new Intl.NumberFormat('id-ID', {
+                                    style: 'currency',
+                                    currency: '{{ $currentCurrency }}',
+                                    minimumFractionDigits: {{ $currentCurrency == 'IDR' ? 0 : 2 }}
+                                }).format(value)} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
+    @endif
+});
+</script>
 @endsection
