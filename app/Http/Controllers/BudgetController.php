@@ -132,7 +132,8 @@ class BudgetController extends Controller
                        ->exists();
         
         if ($exists) {
-            return back()->withErrors(['category' => 'A budget for this category already exists.'])->withInput();
+            // UPDATED: Use localized error message
+            return back()->withErrors(['category' => __('budget_error_exists')])->withInput();
         }
 
         $amount = $request->amount;
@@ -149,7 +150,8 @@ class BudgetController extends Controller
             'amount' => $amount
         ]);
 
-        return redirect()->route('budget.index')->with('success', 'Budget created successfully!');
+        // UPDATED: Use localized success message
+        return redirect()->route('budget.index')->with('success', __('budget_success_created'));
     }
 
     public function edit(Budget $budget)
@@ -194,7 +196,8 @@ class BudgetController extends Controller
 
         $budget->update(['amount' => $amount]);
 
-        return redirect()->route('budget.index')->with('success', 'Budget updated successfully!');
+        // UPDATED: Use localized success message
+        return redirect()->route('budget.index')->with('success', __('budget_success_updated'));
     }
 
     public function destroy(Budget $budget)
@@ -205,7 +208,8 @@ class BudgetController extends Controller
         
         $budget->delete();
         
-        return redirect()->route('budget.index')->with('success', 'Budget deleted successfully!');
+        // UPDATED: Use localized success message
+        return redirect()->route('budget.index')->with('success', __('budget_success_deleted'));
     }
 
     private function getExchangeRate()

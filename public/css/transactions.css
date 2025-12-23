@@ -476,16 +476,29 @@
     border-radius: 1rem;
     padding: 1.5rem;
     margin-bottom: 2rem;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    display: flex;
+    flex-direction: column; /* Stack rows vertically */
     gap: 1rem;
-    align-items: end;
     box-shadow: 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .dark-mode .filter-container {
     background-color: var(--surface-dark);
     border-color: var(--border-dark);
+}
+
+/* New Grid Row Class */
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    align-items: end;
+    width: 100%;
+}
+
+/* Ensure inputs in the new rows look correct */
+.filter-container .form-group {
+    margin-bottom: 0; /* Remove default margin as grid gap handles it */
 }
 
 .filter-container .form-group label {
@@ -540,6 +553,79 @@
     background-color: var(--surface-dark);
     border-color: var(--border-dark);
 }
+
+.summary-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1.5rem;
+}
+
+.summary-pill {
+    display: inline-flex;
+    align-items: center;
+    background-color: var(--surface-light);
+    border: 1px solid var(--border-light);
+    border-radius: 50px; /* Pill shape */
+    padding: 0.5rem 1.5rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+}
+
+.dark-mode .summary-pill {
+    background-color: var(--surface-dark);
+    border-color: var(--border-dark);
+}
+
+.summary-pill:hover {
+    border-color: var(--primary-light);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dark-mode .summary-pill:hover {
+    border-color: var(--primary-dark);
+}
+
+.summary-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'Outfit', sans-serif;
+}
+
+.summary-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary-light);
+    font-weight: 500;
+}
+
+.dark-mode .summary-label {
+    color: var(--text-secondary-dark);
+}
+
+.summary-value {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-primary-light);
+}
+
+.dark-mode .summary-value {
+    color: var(--text-primary-dark);
+}
+
+.summary-divider {
+    width: 1px;
+    height: 1.25rem;
+    background-color: var(--border-light);
+    margin: 0 1.25rem;
+}
+
+.dark-mode .summary-divider {
+    background-color: var(--border-dark);
+}
+
+/* Helper Text Colors for Value */
+.summary-value.text-success { color: #10B981 !important; }
+.summary-value.text-danger { color: #EF4444 !important; }
 
 /* Transactions Table */
 .transactions-table {

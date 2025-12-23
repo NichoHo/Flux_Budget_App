@@ -194,7 +194,7 @@ class AnalyticsController extends Controller
                 $categoryAmount = $categoryAmount / $exchangeRate['rate'];
             }
             
-            $displayCategory = $category ?: 'Uncategorized';
+            $displayCategory = $category ?: __('analytics_uncategorized');
             
             $categoryTotals->push([
                 'category' => $displayCategory,
@@ -228,7 +228,7 @@ class AnalyticsController extends Controller
                 $sourceAmount = $sourceAmount / $exchangeRate['rate'];
             }
             
-            $displaySource = $source ?: 'Uncategorized';
+            $displaySource = $source ?: __('analytics_uncategorized');
             
             $sourceTotals->push([
                 'source' => $displaySource,
@@ -351,9 +351,9 @@ class AnalyticsController extends Controller
             if ($fixedCostRatio > 50) {
                 $recommendations->push([
                     'type' => 'danger',
-                    'title' => 'High Fixed Costs',
-                    'message' => 'Your recurring bills consume ' . round($fixedCostRatio) . '% of your average monthly income. This leaves little room for savings.',
-                    'action' => 'Review your subscriptions',
+                    'title' => __('analytics_high_fixed_costs'), // UPDATED
+                    'message' => __('analytics_high_fixed_costs_msg', ['ratio' => round($fixedCostRatio)]), // UPDATED
+                    'action' => __('analytics_high_fixed_costs_action'), // UPDATED
                     'icon' => 'receipt',
                 ]);
             }
@@ -456,7 +456,17 @@ class AnalyticsController extends Controller
 
         $callback = function() use ($transactions, $currentCurrency, $exchangeRate) {
             $file = fopen('php://output', 'w');
-            fputcsv($file, ['Date', 'Type', 'Category', 'Description', 'Amount (' . $currentCurrency . ')', 'Original Amount', 'Original Currency']);
+            
+            // UPDATED HEADERS
+            fputcsv($file, [
+                __('export_date'), 
+                __('export_type'), 
+                __('export_category'), 
+                __('export_description'), 
+                __('export_amount') . ' (' . $currentCurrency . ')', 
+                __('export_original_amount'), 
+                __('export_original_currency')
+            ]);
 
             foreach ($transactions as $transaction) {
                 $displayAmount = $transaction->amount;
@@ -467,7 +477,7 @@ class AnalyticsController extends Controller
                 fputcsv($file, [
                     $transaction->created_at->format('Y-m-d H:i'), 
                     ucfirst($transaction->type),                  
-                    $transaction->category ?? 'Uncategorized',     
+                    $transaction->category ?? __('analytics_uncategorized'), // UPDATED
                     $transaction->description,                     
                     number_format($displayAmount, 2, '.', ''),    
                     $transaction->amount,                          

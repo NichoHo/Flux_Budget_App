@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', 'Recurring Bills - Flux')
+@section('title', __('recurring_title') . ' - Flux')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/recurring.css') }}">
@@ -10,8 +10,8 @@
 
 <div class="recurring-header">
     <div class="header-content">
-        <h1>Recurring Bills</h1>
-        <p>Manage your automatic recurring income and expenses</p>
+        <h1>{{ __('recurring_title') }}</h1>
+        <p>{{ __('recurring_subtitle') }}</p>
     </div>
     <div class="header-actions">
         <a href="{{ route('currency.switch', $currentCurrency == 'USD' ? 'IDR' : 'USD') }}" class="btn-secondary-custom">
@@ -21,7 +21,7 @@
         
         <a href="{{ route('recurring.create') }}" class="btn-primary-custom">
             <i class="fas fa-plus"></i>
-            <span>Add Recurring Bill</span>
+            <span>{{ __('recurring_add_btn') }}</span>
         </a>
     </div>
 </div>
@@ -38,7 +38,7 @@
             <i class="fas fa-arrow-down"></i>
         </div>
         <div class="stat-content">
-            <p class="stat-label">Monthly Income</p>
+            <p class="stat-label">{{ __('recurring_monthly_income') }}</p>
             <p class="stat-value">
                 @php
                     $monthlyIncome = $bills->where('type', 'income')->where('frequency', 'monthly')->sum('amount');
@@ -60,7 +60,7 @@
             <i class="fas fa-arrow-up"></i>
         </div>
         <div class="stat-content">
-            <p class="stat-label">Monthly Expenses</p>
+            <p class="stat-label">{{ __('recurring_monthly_expenses') }}</p>
             <p class="stat-value">
                 @php
                     $monthlyExpense = $bills->where('type', 'expense')->where('frequency', 'monthly')->sum('amount');
@@ -82,7 +82,7 @@
             <i class="fas fa-calendar-check"></i>
         </div>
         <div class="stat-content">
-            <p class="stat-label">Active Bills</p>
+            <p class="stat-label">{{ __('recurring_active_bills') }}</p>
             <p class="stat-value">{{ $bills->where('is_active', true)->count() }}</p>
         </div>
     </div>
@@ -94,14 +94,14 @@
         <table class="recurring-table">
             <thead>
                 <tr>
-                    <th width="17%">Description</th>
-                    <th width="5%">Type</th>
-                    <th width="10%">Category</th>
-                    <th width="10%">Frequency</th>
-                    <th width="18%">Next Due</th>
-                    <th width="10%">Due In</th>
-                    <th width="14%">Amount</th>
-                    <th width="8%">Status</th>
+                    <th width="17%">{{ __('table_description') }}</th>
+                    <th width="5%">{{ __('table_type') }}</th>
+                    <th width="10%">{{ __('table_category') }}</th>
+                    <th width="10%">{{ __('recurring_table_frequency') }}</th>
+                    <th width="18%">{{ __('recurring_table_next_due') }}</th>
+                    <th width="10%">{{ __('recurring_table_due_in') }}</th>
+                    <th width="14%">{{ __('table_amount') }}</th>
+                    <th width="8%">{{ __('recurring_table_status') }}</th>
                     <th width="8%"></th>
                 </tr>
             </thead>
@@ -115,13 +115,13 @@
                     </td>
                     <td>
                         <span class="badge {{ $bill->type == 'income' ? 'badge-income' : 'badge-expense' }}">
-                            {{ ucfirst($bill->type) }}
+                            {{ $bill->type == 'income' ? __('index_type_income') : __('index_type_expense') }}
                         </span>
                     </td>
                     <td>
                         @if($bill->category)
                             <span class="badge badge-category">
-                                {{ $bill->category }}
+                                {{ __($bill->category) != $bill->category ? __($bill->category) : $bill->category }}
                             </span>
                         @else
                             <span class="text-secondary opacity-50">-</span>
@@ -144,9 +144,9 @@
                             $daysUntil = (int)$daysUntil;
                         @endphp
                         @if($daysUntil < 0)
-                            <span class="days-badge overdue">Overdue</span>
+                            <span class="days-badge overdue">{{ __('recurring_status_overdue') }}</span>
                         @elseif($daysUntil == 0)
-                            <span class="days-badge today">Today</span>
+                            <span class="days-badge today">{{ __('recurring_status_today') }}</span>
                         @elseif($daysUntil <= 7)
                             <span class="days-badge soon">{{ $daysUntil }}d</span>
                         @else
@@ -162,20 +162,20 @@
                     </td>
                     <td>
                         @if($bill->is_active)
-                            <span class="fw-bold text-success">Active</span>
+                            <span class="fw-bold text-success">{{ __('recurring_status_active') }}</span>
                         @else
-                            <span class="fw-bold text-secondary">Inactive</span>
+                            <span class="fw-bold text-secondary">{{ __('recurring_status_inactive') }}</span>
                         @endif
                     </td>
                     <td class="text-end">
                         <div class="action-buttons">
-                            <a href="{{ route('recurring.edit', $bill->id) }}" class="btn-edit" title="Edit">
+                            <a href="{{ route('recurring.edit', $bill->id) }}" class="btn-edit" title="{{ __('index_btn_edit') }}">
                                 <i class="fas fa-pencil-alt"></i>
                             </a>
                             <form action="{{ route('recurring.destroy', $bill->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" class="btn-delete" onclick="return confirm('Are you sure you want to stop this recurring bill?')" title="Delete">
+                                <button type="submit" class="btn-delete" onclick="return confirm('{{ __('recurring_delete_confirm') }}')" title="{{ __('index_btn_delete') }}">
                                     <i class="fas fa-trash-alt"></i>
                                 </button>
                             </form>
@@ -189,7 +189,7 @@
     @else
     <div class="no-data">
         <i class="fas fa-calendar-times"></i>
-        <p>No recurring bills found</p>
+        <p>{{ __('recurring_no_data') }}</p>
     </div>
     @endif
 </div>
@@ -198,7 +198,7 @@
 <div class="text-center mt-4">
     <a href="{{ route('dashboard') }}" class="btn-secondary-custom" style="width: 100%; justify-content: center;">
         <i class="fas fa-arrow-left"></i>
-        <span>Back to Dashboard</span>
+        <span>{{ __('index_btn_back') }}</span>
     </a>
 </div>
 @endif

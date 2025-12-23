@@ -22,7 +22,7 @@
         
         <a href="{{ route('analytics.export') }}" class="btn-primary-custom">
             <i class="fas fa-file-download"></i>
-            <span>{{ __('Export Report') }}</span>
+            <span>{{ __('analytics_export_report') }}</span>
         </a>
     </div>
 </div>
@@ -188,10 +188,10 @@
             <div class="insight-icon" style="background-color: #e0e7ff; color: #4338ca;">
                 <i class="fas fa-calendar-check"></i>
             </div>
-            <h3 class="insight-title">Recurring Obligations</h3>
+            <h3 class="insight-title">{{ __('analytics_recurring_obligations') }}</h3>
         </div>
         <div style="margin-bottom: 1rem;">
-            <p class="text-muted" style="font-size: 0.9em; margin-bottom: 0.5rem;">Est. Monthly Fixed Cost</p>
+            <p class="text-muted" style="font-size: 0.9em; margin-bottom: 0.5rem;">{{ __('analytics_est_monthly_fixed_cost') }}</p>
             <h2 style="font-size: 1.5rem; color: #1f2937;">
                 @if($currentCurrency == 'IDR')
                     Rp {{ number_format($totalRecurringMonthly, 0, ',', '.') }}
@@ -202,7 +202,7 @@
         </div>
         <ul class="insight-list">
             <li class="insight-item">
-                <span class="insight-label">Yearly Projection</span>
+                <span class="insight-label">{{ __('analytics_yearly_projection') }}</span>
                 <span class="insight-value">
                     @if($currentCurrency == 'IDR')
                         Rp {{ number_format($totalRecurringMonthly * 12, 0, ',', '.') }}
@@ -213,7 +213,7 @@
             </li>
             @if(count($monthlyData) > 0)
             <li class="insight-item">
-                <span class="insight-label">Discretionary (Avg)</span>
+                <span class="insight-label">{{ __('analytics_discretionary_avg') }}</span>
                 @php 
                     $avgIncome = collect($monthlyData)->avg('income'); 
                 @endphp

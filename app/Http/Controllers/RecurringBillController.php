@@ -57,7 +57,7 @@ class RecurringBillController extends Controller
             'is_active' => true
         ]);
 
-        return redirect()->route('recurring.index')->with('success', 'Recurring bill created!');
+        return redirect()->route('recurring.index')->with('success', __('recurring_create_success'));
     }
 
     public function edit(RecurringBill $recurringBill)
@@ -100,14 +100,14 @@ class RecurringBillController extends Controller
             'frequency' => $request->frequency,
         ]);
 
-        return redirect()->route('recurring.index')->with('success', 'Future bills updated.');
+        return redirect()->route('recurring.index')->with('success', __('recurring_update_success'));
     }
 
     public function destroy(RecurringBill $recurringBill)
     {
         if ($recurringBill->user_id !== Auth::id()) abort(403);
         $recurringBill->delete();
-        return redirect()->route('recurring.index')->with('success', 'Recurring bill stopped.');
+        return redirect()->route('recurring.index')->with('success', __('recurring_delete_success'));
     }
 
     private function getExchangeRate()

@@ -13,47 +13,75 @@ class TransactionController extends Controller
     // READ: Show list of transactions
     public function index(Request $request)
     {
-        // Start with base query for current user
         $query = Transaction::where('user_id', Auth::id());
         
-        // Apply search filter
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->where('description', 'like', "%{$search}%");
+        // 1. Search
+        if ($request->filled('search')) {
+            $query->where('description', 'like', "%{$request->search}%");
         }
         
-        // Apply type filter
-        if ($request->has('type') && $request->type != 'all') {
+        // 2. Date Range
+        if ($request->filled('date_from')) {
+            $query->whereDate('created_at', '>=', $request->date_from);
+        }
+        if ($request->filled('date_to')) {
+            $query->whereDate('created_at', '<=', $request->date_to);
+        }
+        
+        // 3. Type
+        if ($request->filled('type') && $request->type != 'all') {
             $query->where('type', $request->type);
         }
-        
-        // Apply date filter
-        if ($request->has('date') && $request->date != '') {
-            $query->whereDate('created_at', $request->date);
+
+        // 4. Category
+        if ($request->filled('category')) {
+            $query->where('category', $request->category);
+        }
+
+        $currentCurrency = session('currency', 'IDR');
+        $exchangeRate = $this->getExchangeRate();
+        $rate = $exchangeRate['rate'];
+
+        // 5. Amount Filters
+        if ($request->filled('min_amount')) {
+            $min = $request->min_amount;
+            if ($currentCurrency === 'USD') $min *= $rate;
+            $query->where('amount', '>=', $min);
+        }
+
+        if ($request->filled('max_amount')) {
+            $max = $request->max_amount;
+            if ($currentCurrency === 'USD') $max *= $rate;
+            $query->where('amount', '<=', $max);
         }
         
-        // Apply sorting
+        // --- SUMMARY CALCULATION (New) ---
+        $summaryQuery = clone $query;
+        $totalCount = $summaryQuery->count();
+        $totalSum = $summaryQuery->sum('amount');
+        // ---------------------------------
+
+        // Sorting
         $sortBy = $request->get('sort_by', 'created_at');
         $sortOrder = $request->get('sort_order', 'desc');
         $query->orderBy($sortBy, $sortOrder);
         
-        // Get filtered transactions
         $transactions = $query->paginate(10);
         
-        // Get current currency and exchange rate
-        $currentCurrency = session('currency', 'IDR');
-        $exchangeRate = $this->getExchangeRate();
+        $categories = [
+            'Income' => ['Salary', 'Freelance', 'Investment', 'Business', 'Other Income'],
+            'Expense' => ['Food', 'Shopping', 'Transportation', 'Entertainment', 'Bills & Utilities', 'Healthcare', 'Education', 'Travel', 'Other']
+        ];
         
-        return view('transactions.index', compact('transactions', 'currentCurrency', 'exchangeRate'));
+        // Pass totalCount and totalSum to view
+        return view('transactions.index', compact('transactions', 'currentCurrency', 'exchangeRate', 'categories', 'totalCount', 'totalSum'));
     }
 
     // CREATE: Show the form
     public function create()
     {
-        // Currency is now initialized in app.blade.php, but let's make sure
         $currentCurrency = session('currency', 'IDR');
         $exchangeRate = $this->getExchangeRate();
-        
         return view('transactions.create', compact('currentCurrency', 'exchangeRate'));
     }
 
@@ -209,24 +237,14 @@ class TransactionController extends Controller
     // Helper method to get exchange rate
     private function getExchangeRate()
     {
-        // Try to get live rate, fallback to default
         try {
             $response = Http::timeout(3)->get('https://api.exchangerate-api.com/v4/latest/USD');
             if ($response->successful()) {
                 $data = $response->json();
-                return [
-                    'rate' => $data['rates']['IDR'] ?? 16000,
-                    'is_live' => true
-                ];
+                return ['rate' => $data['rates']['IDR'] ?? 16000, 'is_live' => true];
             }
-        } catch (\Exception $e) {
-            // Fallback to default
-        }
-        
-        return [
-            'rate' => 16000,
-            'is_live' => false
-        ];
+        } catch (\Exception $e) {}
+        return ['rate' => 16000, 'is_live' => false];
     }
 
     private function validateCategoryBasedOnType($type, $category)
