@@ -164,8 +164,8 @@
     "create_saving": "Saving...",
     "create_amount_placeholder_idr": "100000",
     "create_amount_placeholder_usd": "10.00",
-    "budget_alert_exceeded": "⚠️ ALERT: You have exceeded your :category budget! (:percentage%)",
-    "budget_alert_warning": "⚠️ Warning: You have reached :percentage% of your :category budget.",
+    "budget_alert_exceeded": "ALERT: You have exceeded your :category budget! (:percentage%)",
+    "budget_alert_warning": "Warning: You have reached :percentage% of your :category budget.",
 
     "edit_title": "Edit Transaction",
     "edit_subtitle": "Update your transaction details",
@@ -246,7 +246,7 @@
     "budget_tip_1": "Set realistic budgets based on your income and expenses",
     "budget_tip_2": "Review and adjust your budgets monthly",
     "budget_tip_3": "Budgets help you track spending in specific categories",
-    "budget_tip_4": "You'll get warnings when you reach 80% of your budget",
+    "budget_tip_4": "You'll get warnings when you reach 90% of your budget",
     
     "budget_update_tips_title": "Update Tips",
     "budget_update_tip_1": "Increasing your budget gives you more spending room",

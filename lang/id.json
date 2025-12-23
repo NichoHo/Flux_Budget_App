@@ -164,8 +164,8 @@
     "create_saving": "Menyimpan...",
     "create_amount_placeholder_idr": "100000",
     "create_amount_placeholder_usd": "10.00",
-    "budget_alert_exceeded": "⚠️ PERINGATAN: Anda telah melebihi anggaran :category Anda! (:percentage%)",
-    "budget_alert_warning": "⚠️ Peringatan: Anda telah mencapai :percentage% dari anggaran :category Anda.",
+    "budget_alert_exceeded": "PERINGATAN: Anda telah melebihi anggaran :category Anda! (:percentage%)",
+    "budget_alert_warning": "Peringatan: Anda telah mencapai :percentage% dari anggaran :category Anda.",
 
     "edit_title": "Ubah Transaksi",
     "edit_subtitle": "Perbarui detail transaksi Anda",
@@ -246,7 +246,7 @@
     "budget_tip_1": "Tetapkan anggaran realistis berdasarkan pendapatan dan pengeluaran Anda",
     "budget_tip_2": "Tinjau dan sesuaikan anggaran Anda setiap bulan",
     "budget_tip_3": "Anggaran membantu Anda melacak pengeluaran dalam kategori tertentu",
-    "budget_tip_4": "Anda akan mendapatkan peringatan saat mencapai 80% dari anggaran",
+    "budget_tip_4": "Anda akan mendapatkan peringatan saat mencapai 90% dari anggaran",
 
     "budget_update_tips_title": "Tips Pembaruan",
     "budget_update_tip_1": "Meningkatkan anggaran memberi Anda lebih banyak ruang belanja",

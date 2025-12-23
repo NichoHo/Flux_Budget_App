@@ -168,6 +168,58 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; }
     color: var(--primary-dark);
 }
 
+/* --- ADDED: Primary Button & Modal Styles --- */
+
+.btn-primary-custom, 
+/* Override Bootstrap btn-primary to match theme if needed */
+.btn-primary { 
+    background-color: var(--primary-light); 
+    color: white; 
+    padding: 0.75rem 1.5rem; 
+    border: none;
+    border-radius: 0.5rem; 
+    transition: all 0.3s; 
+    cursor: pointer; 
+    display: inline-flex; align-items: center; gap: 0.5rem; 
+    font-weight: 500; text-decoration: none; 
+}
+
+.btn-primary-custom:hover, .btn-primary:hover { 
+    background-color: #0F766E; /* Darker Teal */
+    color: white;
+}
+
+.dark-mode .btn-primary-custom, .dark-mode .btn-primary { 
+    background-color: var(--primary-dark); 
+    color: var(--surface-dark); /* Dark text on bright teal for contrast */
+}
+
+.dark-mode .btn-primary-custom:hover, .dark-mode .btn-primary:hover { 
+    background-color: #14B8A6; /* Teal 500 */
+}
+
+/* Modal Dark Mode Overrides */
+.modal-content {
+    background-color: var(--surface-light);
+    color: var(--text-primary-light);
+    border: 1px solid var(--border-light);
+}
+
+.dark-mode .modal-content {
+    background-color: var(--surface-dark);
+    color: var(--text-primary-dark);
+    border-color: var(--border-dark);
+}
+
+.dark-mode .modal-header,
+.dark-mode .modal-footer {
+    border-color: var(--border-dark);
+}
+
+.dark-mode .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
 /* Mobile Responsive */
 @media (max-width: 992px) {
     .sidebar { width: 100%; height: var(--mobile-nav-height); top: auto; bottom: 0; flex-direction: row; border-right: none; border-top: 1px solid var(--border-light); padding: 0; background-color: var(--surface-light); overflow-y: visible; }

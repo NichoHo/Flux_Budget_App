@@ -133,20 +133,13 @@ class TransactionController extends Controller
             'receipt_image_url' => $path
         ]);
 
-        // --- ALERT LOGIC ---
-        // We use the 'create_success_message' key you already have, or fall back to English
-        $message = __('create_success_message'); 
-        
+        // --- UPDATED ALERT LOGIC ---
+        // Pass alert as a separate session key for better UI handling
         $alert = $this->checkBudgetStatus($transaction);
-        
-        if ($alert) {
-            // Append alert to the success message
-            $message .= ' ' . $alert;
-        }
-        // -------------------
 
         return redirect()->route('transactions.index')
-            ->with('success', $message);
+            ->with('success', __('create_success_message'))
+            ->with('budget_alert', $alert); // Pass separately
     }
 
     // DELETE: Remove transaction
@@ -229,18 +222,12 @@ class TransactionController extends Controller
         
         $transaction->save();
 
-        // --- ALERT LOGIC ---
-        // Use the existing 'edit_success_message' key
-        $message = __('edit_success_message');
-        
+        // --- UPDATED ALERT LOGIC ---
         $alert = $this->checkBudgetStatus($transaction);
-        
-        if ($alert) {
-            $message .= ' ' . $alert;
-        }
-        // -------------------
 
-        return redirect()->route('transactions.index')->with('success', $message);
+        return redirect()->route('transactions.index')
+            ->with('success', __('edit_success_message'))
+            ->with('budget_alert', $alert); // Pass separately
     }
 
     // --- HELPER METHOD FOR ALERTS ---
@@ -285,7 +272,7 @@ class TransactionController extends Controller
                 'category' => $transaction->category,
                 'percentage' => round($percentage)
             ]);
-        } elseif ($percentage >= 80) {
+        } elseif ($percentage >= 90) { // Keep the 90% threshold
             return __('budget_alert_warning', [
                 'category' => $transaction->category,
                 'percentage' => round($percentage)
