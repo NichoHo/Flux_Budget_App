@@ -130,7 +130,7 @@
                             ($budget->category == 'Shopping' ? 'shopping-bag' : 
                             ($budget->category == 'Transportation' ? 'car' : 
                             ($budget->category == 'Entertainment' ? 'film' : 
-                            ($budget->category == 'Bills & Utilities' ? 'file-invoice-dollar' : 
+                            ($budget->category == 'Bills and Utilities' ? 'file-invoice-dollar' : 
                             ($budget->category == 'Healthcare' ? 'heartbeat' : 
                             ($budget->category == 'Education' ? 'graduation-cap' : 
                             ($budget->category == 'Travel' ? 'plane' : 'tag'))))))) 

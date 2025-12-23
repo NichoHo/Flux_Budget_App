@@ -960,7 +960,7 @@
 .text-danger { color: #EF4444; }
 .fw-bold { font-weight: 600; }
 .text-end { text-align: right; }
-.text-muted { color: #94a3b8; }
+.text-muted { color: #94a3b8 !important; }
 .text-secondary { color: var(--text-secondary-light); }
 .dark-mode .text-secondary { color: var(--text-secondary-dark); }
 .opacity-50 { opacity: 0.5; }

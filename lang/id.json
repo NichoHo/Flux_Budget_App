@@ -23,7 +23,7 @@
     "step1_desc": "Buat akun aman Anda dalam hitungan detik",
     "step2_title": "Tambah Transaksi",
     "step2_desc": "Catat pendapatan dan pengeluaran Anda dengan opsi unggah struk",
-    "step3_title": "Lacak & Analisis",
+    "step3_title": "Lacak dan Analisis",
     "step3_desc": "Lihat saldo dan pola pengeluaran Anda di dasbor",
     "step4_title": "Capai Tujuan",
     "step4_desc": "Buat keputusan berdasarkan informasi dan raih tujuan keuangan Anda",
@@ -94,7 +94,7 @@
     "Shopping": "Belanja",
     "Transportation": "Transportasi",
     "Entertainment": "Hiburan",
-    "Bills & Utilities": "Tagihan & Utilitas",
+    "Bills and Utilities": "Tagihan dan Utilitas",
     "Healthcare": "Kesehatan",
     "Education": "Pendidikan",
     "Travel": "Perjalanan",
@@ -102,7 +102,7 @@
     "category_type_mismatch": "Kategori akan dihapus saat mengubah jenis transaksi. Silakan pilih kategori baru.",
 
     "settings_subtitle": "Kelola preferensi akun Anda",
-    "settings_appearance": "Tampilan & Bahasa",
+    "settings_appearance": "Tampilan dan Bahasa",
     "desc_language": "Pilih bahasa pilihan Anda",
     "label_theme": "Mode Gelap",
     "desc_theme": "Beralih antara tema terang dan gelap",
@@ -164,6 +164,8 @@
     "create_saving": "Menyimpan...",
     "create_amount_placeholder_idr": "100000",
     "create_amount_placeholder_usd": "10.00",
+    "budget_alert_exceeded": "⚠️ PERINGATAN: Anda telah melebihi anggaran :category Anda! (:percentage%)",
+    "budget_alert_warning": "⚠️ Peringatan: Anda telah mencapai :percentage% dari anggaran :category Anda.",
 
     "edit_title": "Ubah Transaksi",
     "edit_subtitle": "Perbarui detail transaksi Anda",
@@ -259,7 +261,7 @@
     "budget_delete_confirm": "Apakah Anda yakin ingin menghapus anggaran ini?",
     "budget_no_data": "Belum ada anggaran. Buat anggaran pertama Anda untuk mulai melacak pengeluaran!",
 
-    "budget_overview_used_committed": "Terpakai & Komitmen",
+    "budget_overview_used_committed": "Terpakai dan Komitmen",
     "budget_overview_act": "Akt",
     "budget_overview_rec": "Berulang",
     "budget_card_upcoming": "Akan Datang",
@@ -270,7 +272,7 @@
     "budget_success_updated": "Anggaran berhasil diperbarui!",
     "budget_success_deleted": "Anggaran berhasil dihapus!",
 
-    "analytics_title": "Analitik & Wawasan",
+    "analytics_title": "Analitik dan Wawasan",
     "analytics_subtitle": "Dapatkan wawasan mendalam tentang pola pengeluaran Anda",
     "analytics_total_income": "Total Pemasukan",
     "analytics_total_expense": "Total Pengeluaran",

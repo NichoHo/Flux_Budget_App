@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Transaction;
+use App\Models\Budget;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class TransactionController extends Controller
 {
@@ -55,11 +57,11 @@ class TransactionController extends Controller
             $query->where('amount', '<=', $max);
         }
         
-        // --- SUMMARY CALCULATION (New) ---
+        // --- SUMMARY CALCULATION ---
         $summaryQuery = clone $query;
         $totalCount = $summaryQuery->count();
         $totalSum = $summaryQuery->sum('amount');
-        // ---------------------------------
+        // ---------------------------
 
         // Sorting
         $sortBy = $request->get('sort_by', 'created_at');
@@ -70,10 +72,9 @@ class TransactionController extends Controller
         
         $categories = [
             'Income' => ['Salary', 'Freelance', 'Investment', 'Business', 'Other Income'],
-            'Expense' => ['Food', 'Shopping', 'Transportation', 'Entertainment', 'Bills & Utilities', 'Healthcare', 'Education', 'Travel', 'Other']
+            'Expense' => ['Food', 'Shopping', 'Transportation', 'Entertainment', 'Bills and Utilities', 'Healthcare', 'Education', 'Travel', 'Other']
         ];
         
-        // Pass totalCount and totalSum to view
         return view('transactions.index', compact('transactions', 'currentCurrency', 'exchangeRate', 'categories', 'totalCount', 'totalSum'));
     }
 
@@ -123,7 +124,7 @@ class TransactionController extends Controller
             $path = $request->file('receipt_image')->store('receipts', 'public');
         }
 
-        Transaction::create([
+        $transaction = Transaction::create([
             'user_id' => Auth::id(),
             'amount' => $amount, // Stored as IDR
             'type' => $request->type,
@@ -132,19 +133,29 @@ class TransactionController extends Controller
             'receipt_image_url' => $path
         ]);
 
+        // --- ALERT LOGIC ---
+        // We use the 'create_success_message' key you already have, or fall back to English
+        $message = __('create_success_message'); 
+        
+        $alert = $this->checkBudgetStatus($transaction);
+        
+        if ($alert) {
+            // Append alert to the success message
+            $message .= ' ' . $alert;
+        }
+        // -------------------
+
         return redirect()->route('transactions.index')
-            ->with('success', 'Transaction added successfully!');
+            ->with('success', $message);
     }
 
     // DELETE: Remove transaction
     public function destroy(Transaction $transaction)
     {
-        // AUTHORIZATION: Ensure user owns this transaction before deleting [cite: 9]
         if ($transaction->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
 
-        // Delete the image file if it exists to save space
         if ($transaction->receipt_image_url) {
             Storage::disk('public')->delete($transaction->receipt_image_url);
         }
@@ -160,14 +171,12 @@ class TransactionController extends Controller
             abort(403, 'Unauthorized action.');
         }
 
-        $currentCurrency = session('currency', 'IDR'); // Changed default from 'USD' to 'IDR'
-        $exchangeRate = $this->getExchangeRate(); // Fixed: use $this->getExchangeRate() instead of getExchangeRate()
+        $currentCurrency = session('currency', 'IDR'); 
+        $exchangeRate = $this->getExchangeRate(); 
         
-        // Convert amount for display based on current currency
         if ($currentCurrency === 'IDR') {
-            $transaction->display_amount = $transaction->amount; // Already stored as IDR
+            $transaction->display_amount = $transaction->amount; 
         } else {
-            // If displaying in USD, convert from stored IDR to USD
             $transaction->display_amount = $transaction->amount / $exchangeRate['rate'];
         }
 
@@ -177,7 +186,6 @@ class TransactionController extends Controller
     // UPDATE: Save the changes to the DB
     public function update(Request $request, Transaction $transaction)
     {
-        // DATA ISOLATION Check
         if ($transaction->user_id !== Auth::id()) {
             abort(403, 'Unauthorized action.');
         }
@@ -190,51 +198,103 @@ class TransactionController extends Controller
             'receipt_image' => 'nullable|image|max:2048'
         ]);
 
-        // Validate category matches type
         if (!$this->validateCategoryBasedOnType($request->type, $request->category)) {
             return redirect()->back()
                 ->withErrors(['category' => 'Selected category does not match transaction type.'])
                 ->withInput();
         }
 
-        // Get current currency from session
         $currentCurrency = session('currency', 'IDR');
         $amount = $request->amount;
         
-        // Convert to IDR if input is in USD
         if ($currentCurrency === 'USD') {
             $exchangeRate = $this->getExchangeRate();
             $amount = $amount * $exchangeRate['rate'];
         }
         
-        // Always store in IDR
         $amount = round($amount, 2);
 
-        // 1. Handle File Upload (If a new file is provided)
         if ($request->hasFile('receipt_image')) {
-            // Delete old image if it exists
             if ($transaction->receipt_image_url) {
                 Storage::disk('public')->delete($transaction->receipt_image_url);
             }
-
-            // Store new image and update the path
             $path = $request->file('receipt_image')->store('receipts', 'public');
             $transaction->receipt_image_url = $path;
         }
 
-        // 2. Update other text fields (amount is stored as IDR)
         $transaction->category = $request->category;
-        $transaction->amount = $amount; // Store as IDR
+        $transaction->amount = $amount; 
         $transaction->type = $request->type;
         $transaction->description = $request->description;
         
-        // 3. Save
         $transaction->save();
 
-        return redirect()->route('transactions.index')->with('success', 'Transaction updated!');
+        // --- ALERT LOGIC ---
+        // Use the existing 'edit_success_message' key
+        $message = __('edit_success_message');
+        
+        $alert = $this->checkBudgetStatus($transaction);
+        
+        if ($alert) {
+            $message .= ' ' . $alert;
+        }
+        // -------------------
+
+        return redirect()->route('transactions.index')->with('success', $message);
     }
 
-    // Helper method to get exchange rate
+    // --- HELPER METHOD FOR ALERTS ---
+    private function checkBudgetStatus(Transaction $transaction)
+    {
+        // Only check expenses with a category
+        if ($transaction->type !== 'expense' || !$transaction->category) {
+            return null;
+        }
+
+        // Only check for current month transactions
+        if (!$transaction->created_at->isCurrentMonth()) {
+            return null;
+        }
+
+        $userId = Auth::id();
+
+        // Find the budget for this category
+        $budget = Budget::where('user_id', $userId)
+            ->where('category', $transaction->category)
+            ->first();
+
+        // If no budget exists, no alert is needed
+        if (!$budget || $budget->amount <= 0) {
+            return null;
+        }
+
+        // Calculate total actual spent for this category in the current month
+        $totalSpent = Transaction::where('user_id', $userId)
+            ->where('type', 'expense')
+            ->where('category', $transaction->category)
+            ->whereMonth('created_at', Carbon::now()->month)
+            ->whereYear('created_at', Carbon::now()->year)
+            ->sum('amount');
+
+        // Calculate percentage used
+        $percentage = ($totalSpent / $budget->amount) * 100;
+
+        // Return localized alert messages based on thresholds
+        if ($percentage >= 100) {
+            return __('budget_alert_exceeded', [
+                'category' => $transaction->category,
+                'percentage' => round($percentage)
+            ]);
+        } elseif ($percentage >= 80) {
+            return __('budget_alert_warning', [
+                'category' => $transaction->category,
+                'percentage' => round($percentage)
+            ]);
+        }
+
+        return null;
+    }
+
     private function getExchangeRate()
     {
         try {
@@ -250,7 +310,7 @@ class TransactionController extends Controller
     private function validateCategoryBasedOnType($type, $category)
     {
         $incomeCategories = ['Salary', 'Freelance', 'Investment', 'Business', 'Other Income'];
-        $expenseCategories = ['Food', 'Shopping', 'Transportation', 'Entertainment', 'Bills & Utilities', 'Healthcare', 'Education', 'Travel', 'Other'];
+        $expenseCategories = ['Food', 'Shopping', 'Transportation', 'Entertainment', 'Bills and Utilities', 'Healthcare', 'Education', 'Travel', 'Other'];
         
         if ($category) {
             if ($type === 'income' && !in_array($category, $incomeCategories)) {
@@ -266,25 +326,20 @@ class TransactionController extends Controller
 
     public function calendar(Request $request)
     {
-        // Get month from request or use current month
         $monthString = $request->get('month', now()->format('Y-m'));
         $currentMonth = \Carbon\Carbon::parse($monthString . '-01');
         
-        // Get previous and next months for navigation
         $prevMonth = $currentMonth->copy()->subMonth();
         $nextMonth = $currentMonth->copy()->addMonth();
         
-        // Get start and end of month
         $startOfMonth = $currentMonth->copy()->startOfMonth();
         $endOfMonth = $currentMonth->copy()->endOfMonth();
         
-        // Get all transactions for the month
         $transactions = Transaction::where('user_id', Auth::id())
             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
             ->orderBy('created_at', 'asc')
             ->get();
         
-        // Group transactions by date
         $transactionsByDate = [];
         foreach ($transactions as $transaction) {
             $date = $transaction->created_at->format('Y-m-d');
@@ -294,11 +349,9 @@ class TransactionController extends Controller
             $transactionsByDate[$date][] = $transaction;
         }
         
-        // Get calendar data
         $daysInMonth = $currentMonth->daysInMonth;
         $startDayOfWeek = $currentMonth->copy()->startOfMonth()->dayOfWeek;
         
-        // Get current currency and exchange rate
         $currentCurrency = session('currency', 'IDR');
         $exchangeRate = $this->getExchangeRate();
         

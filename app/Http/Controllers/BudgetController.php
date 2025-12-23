@@ -111,7 +111,7 @@ class BudgetController extends Controller
         
         // Get categories that don't have a budget yet
         $existingCategories = Budget::where('user_id', $userId)->pluck('category')->toArray();
-        $allCategories = ['Food', 'Shopping', 'Transportation', 'Entertainment', 'Bills & Utilities', 'Healthcare', 'Education', 'Travel', 'Other'];
+        $allCategories = ['Food', 'Shopping', 'Transportation', 'Entertainment', 'Bills and Utilities', 'Healthcare', 'Education', 'Travel', 'Other'];
         $availableCategories = array_diff($allCategories, $existingCategories);
 
         $currentCurrency = session('currency', 'IDR');

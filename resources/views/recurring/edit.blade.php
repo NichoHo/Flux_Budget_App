@@ -182,7 +182,7 @@
             { value: 'Shopping', text: '{{ __("Shopping") }}' },
             { value: 'Transportation', text: '{{ __("Transportation") }}' },
             { value: 'Entertainment', text: '{{ __("Entertainment") }}' },
-            { value: 'Bills & Utilities', text: '{{ __("Bills & Utilities") }}' },
+            { value: 'Bills and Utilities', text: '{{ __("Bills and Utilities") }}' },
             { value: 'Healthcare', text: '{{ __("Healthcare") }}' },
             { value: 'Education', text: '{{ __("Education") }}' },
             { value: 'Travel', text: '{{ __("Travel") }}' },
