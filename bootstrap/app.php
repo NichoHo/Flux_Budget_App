@@ -11,8 +11,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->trustProxies(at: '*'); 
-        
+        // ----------------------------------------------------------------------
+        // REQUIRED FOR RAILWAY: Trust the proxy so HTTPS works correctly
+        // ----------------------------------------------------------------------
+        $middleware->trustProxies(at: '*');
+
         $middleware->web(append: [
             \App\Http\Middleware\LocalizationMiddleware::class,
         ]);
