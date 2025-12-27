@@ -5,9 +5,7 @@
 }
 
 :{$PORT} {
-    bind 0.0.0.0
-    # Use relative path 'public/' instead of absolute '/app/public'
-    root * public/ 
+    root * public/
     encode zstd br gzip
     php_server
     log
