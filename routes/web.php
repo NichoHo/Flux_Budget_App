@@ -54,6 +54,13 @@ Route::middleware('auth')->group(function () {
     ->parameters(['recurring' => 'recurringBill']);
 });
 
+use App\Http\Controllers\Admin\AdminController;
+
+Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('dashboard');
+    Route::get('/users', [AdminController::class, 'users'])->name('users');
+});
+
 // 4. Default Redirect
 Route::get('/', function () {
     if (Auth::check()) {
