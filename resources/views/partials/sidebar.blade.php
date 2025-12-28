@@ -21,6 +21,20 @@
             </a>
         </li>
 
+        <li class="menu-item {{ request()->routeIs('recurring.*') ? 'active' : '' }}">
+            <a href="{{ route('recurring.index') }}">
+                <i class="fas fa-sync-alt"></i>
+                <span>Recurring Bills</span>
+            </a>
+        </li>
+
+        <li class="menu-item {{ request()->routeIs('budget.*') ? 'active' : '' }}">
+            <a href="{{ route('budget.index') }}">
+                <i class="fas fa-wallet"></i>
+                <span>{{ __('menu_budget') }}</span>
+            </a>
+        </li>
+
         <li class="menu-item {{ request()->routeIs('analytics.*') ? 'active' : '' }}">
             <a href="{{ route('analytics') }}">
                 <i class="fas fa-chart-pie"></i>

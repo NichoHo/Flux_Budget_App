@@ -7,7 +7,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SettingsController;
 use App\Http\Controllers\CurrencyController;
-use App\Http\Controllers\AnalyticsController; // Add this line
+use App\Http\Controllers\AnalyticsController;
 
 // 1. Localization Route (for language only)
 Route::get('/lang/{locale}', function ($locale) {
@@ -36,10 +36,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+    Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
     
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings');
 
+    Route::get('/transactions/calendar', [TransactionController::class, 'calendar'])->name('transactions.calendar');
     Route::resource('transactions', TransactionController::class);
+
+    Route::get('/budget', [App\Http\Controllers\BudgetController::class, 'index'])->name('budget.index');
+    Route::get('/budget/create', [App\Http\Controllers\BudgetController::class, 'create'])->name('budget.create');
+    Route::post('/budget', [App\Http\Controllers\BudgetController::class, 'store'])->name('budget.store');
+    Route::get('/budget/{budget}/edit', [App\Http\Controllers\BudgetController::class, 'edit'])->name('budget.edit');
+    Route::put('/budget/{budget}', [App\Http\Controllers\BudgetController::class, 'update'])->name('budget.update');
+    Route::delete('/budget/{budget}', [App\Http\Controllers\BudgetController::class, 'destroy'])->name('budget.destroy');
+
+    Route::resource('recurring', App\Http\Controllers\RecurringBillController::class)
+    ->parameters(['recurring' => 'recurringBill']);
 });
 
 // 4. Default Redirect

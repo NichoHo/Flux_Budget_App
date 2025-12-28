@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flux - {{ __('hero_title') }}</title>
+    <link rel="icon" type="image/png" href="{{ asset('images/logo.png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ asset('css/landing.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,7 +12,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-       /* UPDATED: New Teal/Cyan Gradients to match the Logo */
        .hero {
             background: linear-gradient(135deg, rgba(15, 23, 42, 0.95) 0%, rgba(13, 148, 136, 0.85) 100%), 
                         url("{{ asset('images/finance.jpg') }}");
@@ -122,22 +122,22 @@
             <ul class="nav nav-pills feature-nav justify-content-center mb-5" id="pills-tab" role="tablist">
                 <li class="nav-item" role="presentation">
                     <button class="nav-link active" id="pills-f1-tab" data-bs-toggle="pill" data-bs-target="#pills-f1" type="button" role="tab" aria-controls="pills-f1" aria-selected="true">
-                        <i class="fas fa-chart-line me-2"></i> {{ __('feature1_title') }}
+                        <i class="fas fa-chart-pie me-2"></i> {{ __('feature1_title') }}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="pills-f2-tab" data-bs-toggle="pill" data-bs-target="#pills-f2" type="button" role="tab" aria-controls="pills-f2" aria-selected="false">
-                        <i class="fas fa-edit me-2"></i> {{ __('feature2_title') }}
+                        <i class="fas fa-wallet me-2"></i> {{ __('feature2_title') }}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="pills-f3-tab" data-bs-toggle="pill" data-bs-target="#pills-f3" type="button" role="tab" aria-controls="pills-f3" aria-selected="false">
-                        <i class="fas fa-receipt me-2"></i> {{ __('feature3_title') }}
+                        <i class="fas fa-calendar-check me-2"></i> {{ __('feature3_title') }}
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
                     <button class="nav-link" id="pills-f4-tab" data-bs-toggle="pill" data-bs-target="#pills-f4" type="button" role="tab" aria-controls="pills-f4" aria-selected="false">
-                        <i class="fas fa-globe me-2"></i> {{ __('feature4_title') }}
+                        <i class="fas fa-money-bill-wave me-2"></i> {{ __('feature4_title') }}
                     </button>
                 </li>
             </ul>
@@ -147,7 +147,7 @@
                     <div class="tab-container row align-items-center gy-5">
                         <div class="col-lg-6 order-lg-1 position-relative">
                             <div class="feature-image-blob"></div>
-                            <img src="{{ asset('images/analytics.jpg') }}" alt="Security Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
+                            <img src="{{ asset('images/analytics.jpg') }}" alt="Analytics Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
                         </div>
                         <div class="col-lg-6 order-lg-2">
                             <h3 class="feature-heading display-6 fw-bold mb-4">{{ __('feature1_title') }}</h3>
@@ -161,7 +161,7 @@
                     <div class="row align-items-center gy-5">
                         <div class="col-lg-6 order-lg-1 position-relative">
                             <div class="feature-image-blob"></div>
-                            <img src="{{ asset('images/phone2.jpg') }}" alt="Management Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
+                            <img src="{{ asset('images/phone2.jpg') }}" alt="Budget Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
                         </div>
                         <div class="col-lg-6 order-lg-2">
                             <h3 class="feature-heading display-6 fw-bold mb-4">{{ __('feature2_title') }}</h3>
@@ -175,7 +175,7 @@
                     <div class="row align-items-center gy-5">
                         <div class="col-lg-6 order-lg-1 position-relative">
                             <div class="feature-image-blob"></div>
-                            <img src="{{ asset('images/phone3.jpg') }}" alt="Receipts Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
+                            <img src="{{ asset('images/phone3.jpg') }}" alt="Recurring Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
                         </div>
                         <div class="col-lg-6 order-lg-2">
                             <h3 class="feature-heading display-6 fw-bold mb-4">{{ __('feature3_title') }}</h3>
@@ -189,7 +189,7 @@
                     <div class="row align-items-center gy-5">
                         <div class="col-lg-6 order-lg-1 position-relative">
                             <div class="feature-image-blob"></div>
-                            <img src="{{ asset('images/conversation.jpg') }}" alt="Global Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
+                            <img src="{{ asset('images/conversation.jpg') }}" alt="Currency Feature" class="img-fluid feature-detailed-img rounded-4 shadow-lg position-relative z-1">
                         </div>
                         <div class="col-lg-6 order-lg-2">
                             <h3 class="feature-heading display-6 fw-bold mb-4">{{ __('feature4_title') }}</h3>

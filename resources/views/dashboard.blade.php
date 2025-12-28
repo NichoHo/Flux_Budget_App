@@ -18,11 +18,15 @@
         <p>{{ __('dashboard_subtitle') }}</p>
     </div>
     <div class="header-actions">
-        <!-- Currency Switcher - Only changes currency, not language -->
+        <button type="button" id="privacyToggle" class="btn-secondary-custom" onclick="togglePrivacyMode()" title="Toggle Privacy Mode">
+            <i class="fas fa-eye"></i>
+        </button>
+
         <a href="{{ route('currency.switch', $nextCurrency) }}" class="btn-secondary-custom">
             <i class="fas fa-coins"></i> 
             <span>{{ $currentCurrency == 'USD' ? 'USD ($)' : 'IDR (Rp)' }}</span>
         </a>
+        
         <a href="{{ route('transactions.create') }}" class="btn-primary-custom">
             <i class="fas fa-plus"></i>
             <span>{{ __('index_add_transaction') }}</span>
@@ -139,7 +143,7 @@
                     </tr>
                 @empty
                     <tr class="no-data">
-                        <td colspan="5" class="text-center py-4">
+                        <td colspan="6" class="text-center py-4">
                             <i class="fas fa-inbox fa-2x mb-3 text-secondary"></i>
                             <p>{{ __('no_transactions') }}</p>
                         </td>
@@ -155,4 +159,43 @@
         </a>
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check local storage for privacy preference on load
+        const isPrivacyActive = localStorage.getItem('privacyMode') === 'true';
+        if (isPrivacyActive) {
+            enablePrivacyMode();
+        }
+    });
+
+    function togglePrivacyMode() {
+        const body = document.body;
+        // Check if currently active to determine action
+        if (body.classList.contains('privacy-active')) {
+            disablePrivacyMode();
+        } else {
+            enablePrivacyMode();
+        }
+    }
+
+    function enablePrivacyMode() {
+        document.body.classList.add('privacy-active');
+        const icon = document.querySelector('#privacyToggle i');
+        if(icon) {
+            icon.classList.remove('fa-eye');
+            icon.classList.add('fa-eye-slash');
+        }
+        localStorage.setItem('privacyMode', 'true');
+    }
+
+    function disablePrivacyMode() {
+        document.body.classList.remove('privacy-active');
+        const icon = document.querySelector('#privacyToggle i');
+        if(icon) {
+            icon.classList.remove('fa-eye-slash');
+            icon.classList.add('fa-eye');
+        }
+        localStorage.setItem('privacyMode', 'false');
+    }
+</script>
 @endsection

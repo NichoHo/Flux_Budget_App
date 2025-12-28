@@ -15,16 +15,14 @@
         <p>{{ __('analytics_subtitle') }}</p>
     </div>
     <div class="header-actions">
-        <!-- Currency Switcher -->
         <a href="{{ route('currency.switch', $currentCurrency == 'USD' ? 'IDR' : 'USD') }}" class="btn-secondary-custom">
             <i class="fas fa-coins"></i> 
             <span>{{ $currentCurrency == 'USD' ? 'USD ($)' : 'IDR (Rp)' }}</span>
         </a>
         
-        <!-- Back to Dashboard -->
-        <a href="{{ route('dashboard') }}" class="btn-secondary-custom">
-            <i class="fas fa-arrow-left"></i>
-            <span>{{ __('analytics_back_dashboard') }}</span>
+        <a href="{{ route('analytics.export') }}" class="btn-primary-custom">
+            <i class="fas fa-file-download"></i>
+            <span>{{ __('analytics_export_report') }}</span>
         </a>
     </div>
 </div>
@@ -42,7 +40,6 @@
     </a>
 </div>
 @else
-<!-- Stats Overview -->
 <div class="stats-cards">
     <div class="stat-card">
         <div class="stat-icon income">
@@ -99,7 +96,6 @@
     </div>
 </div>
 
-<!-- Charts Section -->
 <div class="charts-section">
     <h2 style="margin-bottom: 1rem;">{{ __('analytics_visualizations') }}</h2>
     <p style="color: var(--text-secondary-light); font-size: 0.875rem; margin-bottom: 1rem;">
@@ -127,7 +123,6 @@
     </div>
 </div>
 
-<!-- Insights Grid -->
 <div class="insights-grid">
     <div class="insight-card">
         <div class="insight-header">
@@ -190,6 +185,52 @@
     
     <div class="insight-card">
         <div class="insight-header">
+            <div class="insight-icon" style="background-color: #e0e7ff; color: #4338ca;">
+                <i class="fas fa-calendar-check"></i>
+            </div>
+            <h3 class="insight-title">{{ __('analytics_recurring_obligations') }}</h3>
+        </div>
+        <div style="margin-bottom: 1rem;">
+            <p class="text-muted" style="font-size: 0.9em; margin-bottom: 0.5rem;">{{ __('analytics_est_monthly_fixed_cost') }}</p>
+            <h2 style="font-size: 1.5rem; color: #1f2937;">
+                @if($currentCurrency == 'IDR')
+                    Rp {{ number_format($totalRecurringMonthly, 0, ',', '.') }}
+                @else
+                    $ {{ number_format($totalRecurringMonthly, 2, '.', ',') }}
+                @endif
+            </h2>
+        </div>
+        <ul class="insight-list">
+            <li class="insight-item">
+                <span class="insight-label">{{ __('analytics_yearly_projection') }}</span>
+                <span class="insight-value">
+                    @if($currentCurrency == 'IDR')
+                        Rp {{ number_format($totalRecurringMonthly * 12, 0, ',', '.') }}
+                    @else
+                        $ {{ number_format($totalRecurringMonthly * 12, 2, '.', ',') }}
+                    @endif
+                </span>
+            </li>
+            @if(count($monthlyData) > 0)
+            <li class="insight-item">
+                <span class="insight-label">{{ __('analytics_discretionary_avg') }}</span>
+                @php 
+                    $avgIncome = collect($monthlyData)->avg('income'); 
+                @endphp
+                <span class="insight-value text-success">
+                    @if($currentCurrency == 'IDR')
+                        Rp {{ number_format(max(0, $avgIncome - $totalRecurringMonthly), 0, ',', '.') }}
+                    @else
+                        $ {{ number_format(max(0, $avgIncome - $totalRecurringMonthly), 2, '.', ',') }}
+                    @endif
+                </span>
+            </li>
+            @endif
+        </ul>
+    </div>
+
+    <div class="insight-card">
+        <div class="insight-header">
             <div class="insight-icon trends">
                 <i class="fas fa-chart-line"></i>
             </div>
@@ -225,32 +266,8 @@
             </li>
         </ul>
     </div>
-    
-    <div class="insight-card">
-        <div class="insight-header">
-            <div class="insight-icon pattern">
-                <i class="fas fa-calendar-alt"></i>
-            </div>
-            <h3 class="insight-title">{{ __('analytics_weekly_spending') }}</h3>
-        </div>
-        <ul class="insight-list">
-            @foreach($weeklyPattern as $day)
-            <li class="insight-item">
-                <span class="insight-label">{{ $day['day'] }}</span>
-                <span class="insight-value">
-                    @if($currentCurrency == 'IDR')
-                        Rp {{ number_format($day['amount'], 0, ',', '.') }}
-                    @else
-                        $ {{ number_format($day['amount'], 2, '.', ',') }}
-                    @endif
-                </span>
-            </li>
-            @endforeach
-        </ul>
-    </div>
 </div>
 
-<!-- Recommendations Section -->
 <div class="recommendations-section">
     <h2 style="margin-bottom: 1rem;">{{ __('analytics_recommendations') }}</h2>
     <p style="color: var(--text-secondary-light); font-size: 0.875rem; margin-bottom: 1rem;">
@@ -387,58 +404,6 @@ document.addEventListener('DOMContentLoaded', function() {
                                     currency: '{{ $currentCurrency }}',
                                     minimumFractionDigits: {{ $currentCurrency == 'IDR' ? 0 : 2 }}
                                 }).format(value)} (${percentage}%)`;
-                            }
-                        }
-                    }
-                }
-            }
-        });
-    }
-
-    // Weekly Pattern Chart
-    const weeklyCtx = document.getElementById('weeklyPatternChart').getContext('2d');
-    if (weeklyCtx) {
-        new Chart(weeklyCtx, {
-            type: 'bar',
-            data: {
-                labels: @json($chartData['weeklyLabels']),
-                datasets: [{
-                    label: '{{ __("analytics_daily_spending") }}',
-                    data: @json($chartData['weeklyAmounts']),
-                    backgroundColor: 'rgba(59, 130, 246, 0.5)',
-                    borderColor: '#3B82F6',
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        display: false
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return new Intl.NumberFormat('id-ID', {
-                                    style: 'currency',
-                                    currency: '{{ $currentCurrency }}',
-                                    minimumFractionDigits: {{ $currentCurrency == 'IDR' ? 0 : 2 }}
-                                }).format(context.parsed.y);
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: function(value) {
-                                return new Intl.NumberFormat('id-ID', {
-                                    style: 'currency',
-                                    currency: '{{ $currentCurrency }}',
-                                    minimumFractionDigits: {{ $currentCurrency == 'IDR' ? 0 : 2 }}
-                                }).format(value);
                             }
                         }
                     }

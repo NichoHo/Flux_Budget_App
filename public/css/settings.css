@@ -70,24 +70,34 @@
     color: var(--text-primary-dark, #E2E8F0);
 }
 
+/* Danger Button (Logout) */
 .btn-danger-custom {
-    background-color: var(--secondary-light, #D62828);
-    color: white;
-    border: none;
-    padding: 0.5rem 1rem;
+    background-color: rgba(239, 68, 68, 0.1); /* Light Red Tint */
+    color: #EF4444; /* Red Text */
+    border: 1px solid transparent;
+    padding: 0.625rem 1.25rem;
     border-radius: 0.5rem;
     font-weight: 600;
+    font-family: 'Outfit', sans-serif;
     transition: all 0.3s;
     text-decoration: none;
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    cursor: pointer;
 }
+
+.dark-mode .btn-danger-custom {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #F87171;
+}
+
 .btn-danger-custom:hover {
-    background-color: #B91C1C;
+    background-color: #EF4444;
     color: white;
 }
-.dark-mode .btn-danger-custom {
-    background-color: var(--secondary-dark, #FF5C5C);
-    color: var(--surface-dark, #1A2235);
+
+.dark-mode .btn-danger-custom:hover {
+    background-color: #F87171;
+    color: var(--surface-dark);
 }

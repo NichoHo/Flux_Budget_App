@@ -217,9 +217,9 @@
     padding: 2rem;
 }
 
-/* Primary & Secondary Buttons */
+/* Primary & Secondary Buttons (Index Page) */
 .btn-primary-custom {
-    background-color: var(--primary-light);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -234,17 +234,34 @@
 }
 
 .dark-mode .btn-primary-custom {
-    background-color: var(--primary-dark);
-    color: var(--text-primary-dark);
+    background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+    color: white;
 }
 
 .btn-primary-custom:hover {
-    background-color: #003A8C;
+    filter: brightness(110%);
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2);
 }
 
-.dark-mode .btn-primary-custom:hover {
-    background-color: #3B82F6;
+.privacy-active .card-value,
+.privacy-active .transactions-table td:nth-child(5) {
+    color: transparent !important;
+    text-shadow: 0 0 10px rgba(0,0,0,0.5); /* Creates the blur effect */
+    cursor: default;
+    user-select: none; /* Prevents users from highlighting/copying the hidden number */
+    transition: all 0.3s ease;
+}
+
+.dark-mode.privacy-active .card-value,
+.dark-mode.privacy-active .transactions-table td:nth-child(5) {
+    text-shadow: 0 0 10px rgba(255,255,255,0.5); /* Lighter blur for dark mode */
+}
+
+/* Adjust button icon width to prevent layout shift when icon changes */
+#privacyToggle {
+    min-width: 3rem; 
+    justify-content: center;
 }
 
 /* Responsive */
