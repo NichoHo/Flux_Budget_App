@@ -21,7 +21,8 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'preferred_language'
+        'preferred_language',
+        'is_admin'
     ];
 
     /**
@@ -50,5 +51,9 @@ class User extends Authenticatable
     // Relationship: One User has Many Transactions
     public function transactions() {
         return $this->hasMany(Transaction::class);
+    }
+
+    public function isAdmin(): bool {
+        return (bool) $this->is_admin;
     }
 }

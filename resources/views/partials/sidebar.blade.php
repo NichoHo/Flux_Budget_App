@@ -48,6 +48,14 @@
                 <span>{{ __('menu_settings') }}</span>
             </a>
         </li>
+        @if(auth()->user()->isAdmin())
+        <li class="menu-item {{ request()->routeIs('admin.*') ? 'active' : '' }}">
+            <a href="{{ route('admin.dashboard') }}">
+                <i class="fas fa-user-shield"></i>
+                <span>Admin Panel</span>
+            </a>
+        </li>
+        @endif
     </ul>
 
     <div class="sidebar-footer">
