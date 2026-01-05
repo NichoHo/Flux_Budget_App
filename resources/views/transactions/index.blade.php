@@ -153,10 +153,10 @@
                 <tr>
                     <th width="12%">{{ __('table_date') }}</th>
                     <th width="25%">{{ __('table_description') }}</th>
-                    <th width="12%">{{ __('table_type') }}</th>
-                    <th width="15%">{{ __('table_category') }}</th>
+                    <th width="10%">{{ __('table_type') }}</th>
+                    <th width="12%">{{ __('table_category') }}</th>
                     <th width="10%">{{ __('table_receipt') }}</th>
-                    <th width="15%" class="text-end">{{ __('table_amount') }}</th>
+                    <th width="30%" class="text-end">{{ __('table_amount') }}</th>
                     <th width="11%"></th>
                 </tr>
             </thead>

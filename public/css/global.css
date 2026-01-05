@@ -31,6 +31,13 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html {
+    -webkit-text-size-adjust: 100%;
+    -moz-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
 body { 
     font-family: 'Outfit', sans-serif; /* CHANGED FONT */
     background-color: var(--bg-light); 
@@ -42,7 +49,7 @@ body.dark-mode { background-color: var(--bg-dark); color: var(--text-primary-dar
 
 h1, h2, h3, h4, h5, h6 { font-family: 'Outfit', sans-serif; }
 
-.dashboard-container { display: flex; min-height: 100vh; }
+.dashboard-container { display: flex; min-height: 100vh; width: 100%; }
 
 /* Sidebar Styling */
 .sidebar { 

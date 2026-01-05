@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', __('dashboard_title') . ' - Flux')
+@section('title', 'Dashboard - Flux')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
@@ -14,7 +14,7 @@
 
 <div class="dashboard-header">
     <div class="header-content">
-        <h1>{{ __('dashboard_title') }}</h1>
+        <h1>{{ __('welcome_user', ['name' => auth()->user()->name]) }}</h1>
         <p>{{ __('dashboard_subtitle') }}</p>
     </div>
     <div class="header-actions">

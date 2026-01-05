@@ -144,6 +144,7 @@ h1, h2, h3 {
     border-bottom: 1px solid var(--border-light);
     padding: 1rem 0;
     transition: all 0.3s;
+    transition: transform 0.3s ease-in-out, background-color 0.3s, box-shadow 0.3s !important;
 }
 
 .dark-mode .navbar {
@@ -161,8 +162,19 @@ h1, h2, h3 {
     color: var(--text-primary-light);
 }
 
+.navbar-brand img {
+    height: 32px; 
+    width: auto; 
+    margin-right: 10px;
+}
+
 .dark-mode .navbar-brand {
     color: var(--text-primary-dark);
+}
+
+.navbar-hidden {
+    transform: translateY(-100%);
+    box-shadow: none;
 }
 
 .nav-link {
@@ -687,6 +699,18 @@ h1, h2, h3 {
 }
 
 @media (max-width: 768px) {
+    .navbar-brand {
+        margin-right: 0;
+    }
+
+    .navbar-brand span {
+        display: none;
+    }
+
+    .navbar-brand img {
+        margin-right: 0;
+    }
+
     .btn-secondary-custom {
         margin-left: 0;
         margin-top: 1rem;

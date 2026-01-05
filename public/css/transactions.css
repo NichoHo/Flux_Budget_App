@@ -467,6 +467,7 @@
 .header-actions {
     display: flex;
     gap: 0.75rem;
+    margin-left: auto;
 }
 
 /* Filter Container */
@@ -904,8 +905,6 @@
     }
     
     .header-actions {
-        width: 100%;
-        justify-content: space-between;
         margin-top: 1rem;
     }
     
@@ -920,6 +919,10 @@
     
     .action-buttons {
         justify-content: flex-start;
+    }
+
+    .transactions-table th {
+        padding: 0.5rem;
     }
     
     .pagination-container {
