@@ -101,3 +101,9 @@
     background-color: #F87171;
     color: var(--surface-dark);
 }
+
+@media (max-width: 480px) {
+    .settings-label p {
+        display: none;
+    }
+}

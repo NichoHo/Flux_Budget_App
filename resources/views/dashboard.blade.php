@@ -1,6 +1,6 @@
 @extends('app')
 
-@section('title', __('dashboard_title') . ' - Flux')
+@section('title', 'Dashboard - Flux')
 
 @section('styles')
     <link rel="stylesheet" href="{{ asset('css/dashboard.css') }}">
@@ -14,7 +14,7 @@
 
 <div class="dashboard-header">
     <div class="header-content">
-        <h1>{{ __('dashboard_title') }}</h1>
+        <h1>{{ __('welcome_user', ['name' => auth()->user()->name]) }}</h1>
         <p>{{ __('dashboard_subtitle') }}</p>
     </div>
     <div class="header-actions">
@@ -91,7 +91,6 @@
                 <tr>
                     <th>{{ __('table_date') }}</th>
                     <th>{{ __('table_description') }}</th>
-                    <th>{{ __('table_type') }}</th>
                     <th>{{ __('table_category') }}</th>
                     <th>{{ __('table_amount') }}</th>
                     <th>{{ __('table_receipt') }}</th>
@@ -100,14 +99,10 @@
             <tbody>
                 @forelse($recentTransactions as $transaction)
                     <tr>
-                        <td>{{ $transaction->created_at->format('Y-m-d') }}</td>
-                        <td>{{ $transaction->description }}</td>
-                        <td>
-                            <span class="badge {{ $transaction->type == 'income' ? 'text-success badge-income' : 'text-danger badge-expense' }}">
-                                {{ ucfirst($transaction->type) }}
-                            </span>
-                        </td>
-                        <td>
+                        <td class="td-date">{{ $transaction->created_at->format('Y-m-d') }}</td>
+                        <td class="td-desc">{{ $transaction->description }}</td>
+                        
+                        <td class="td-cat">
                             @if($transaction->category && trim($transaction->category) !== '')
                                 <span class="badge {{ $transaction->type == 'income' ? 'badge-income-category' : 'badge-expense-category' }}">
                                     {{ $transaction->category }}
@@ -116,25 +111,25 @@
                                 <span class="text-muted">-</span>
                             @endif
                         </td>
-                        <td>
+
+                        <td class="td-amount {{ $transaction->type == 'income' ? 'text-success' : 'text-danger' }}">
                             @if($currentCurrency == 'IDR')
                                 Rp {{ number_format($transaction->display_amount, 0, ',', '.') }}
                             @else
                                 $ {{ number_format($transaction->display_amount, 2, '.', ',') }}
                             @endif
                         </td>
-                        <td>
+
+                        <td class="td-receipt">
                             @if($transaction->receipt_image_url)
                                 @php
-                                    // Check if the path is already a full URL or a storage path
                                     $receiptPath = $transaction->receipt_image_url;
                                     if (!\Illuminate\Support\Str::startsWith($receiptPath, 'http')) {
-                                        // If it's a storage path, use the storage URL helper
                                         $receiptPath = Storage::url($receiptPath);
                                     }
                                 @endphp
                                 <a href="{{ $receiptPath }}" target="_blank" class="btn-link">
-                                    <i class="fas fa-paperclip"></i> View
+                                    <i class="fas fa-paperclip"></i>
                                 </a>
                             @else
                                 <span class="text-muted">-</span>
@@ -143,7 +138,7 @@
                     </tr>
                 @empty
                     <tr class="no-data">
-                        <td colspan="6" class="text-center py-4">
+                        <td colspan="5" class="text-center py-4">
                             <i class="fas fa-inbox fa-2x mb-3 text-secondary"></i>
                             <p>{{ __('no_transactions') }}</p>
                         </td>

@@ -94,31 +94,25 @@
         <table class="recurring-table">
             <thead>
                 <tr>
-                    <th width="17%">{{ __('table_description') }}</th>
-                    <th width="5%">{{ __('table_type') }}</th>
-                    <th width="10%">{{ __('table_category') }}</th>
+                    <th width="20%">{{ __('table_description') }}</th>
+                    <th width="15%">{{ __('table_category') }}</th>
                     <th width="10%">{{ __('recurring_table_frequency') }}</th>
-                    <th width="18%">{{ __('recurring_table_next_due') }}</th>
+                    <th width="15%">{{ __('recurring_table_next_due') }}</th>
                     <th width="10%">{{ __('recurring_table_due_in') }}</th>
-                    <th width="14%">{{ __('table_amount') }}</th>
-                    <th width="8%">{{ __('recurring_table_status') }}</th>
-                    <th width="8%"></th>
+                    <th width="15%">{{ __('table_amount') }}</th>
+                    <th width="10%">{{ __('recurring_table_status') }}</th>
+                    <th width="5%"></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($bills as $bill)
                 <tr class="{{ !$bill->is_active ? 'inactive-row' : '' }}">
-                    <td>
+                    <td class="td-desc">
                         <div class="bill-description">
                             <span class="fw-bold">{{ $bill->description }}</span>
                         </div>
                     </td>
-                    <td>
-                        <span class="badge {{ $bill->type == 'income' ? 'badge-income' : 'badge-expense' }}">
-                            {{ $bill->type == 'income' ? __('index_type_income') : __('index_type_expense') }}
-                        </span>
-                    </td>
-                    <td>
+                    <td class="td-cat">
                         @if($bill->category)
                             <span class="badge badge-category">
                                 {{ __($bill->category) != $bill->category ? __($bill->category) : $bill->category }}
@@ -127,18 +121,18 @@
                             <span class="text-secondary opacity-50">-</span>
                         @endif
                     </td>
-                    <td>
+                    <td class="td-freq">
                         <span class="frequency-badge frequency-{{ $bill->frequency }}">
                             <i class="fas fa-{{ $bill->frequency == 'weekly' ? 'calendar-week' : ($bill->frequency == 'monthly' ? 'calendar-alt' : 'calendar') }}"></i>
                             {{ ucfirst($bill->frequency) }}
                         </span>
                     </td>
-                    <td>
+                    <td class="td-next">
                         <span class="fw-bold date">
                             {{ \Carbon\Carbon::parse($bill->next_payment_date)->format('M d, Y') }}
                         </span>
                     </td>
-                    <td>
+                    <td class="td-due">
                         @php
                             $daysUntil = \Carbon\Carbon::now()->diffInDays(\Carbon\Carbon::parse($bill->next_payment_date), false);
                             $daysUntil = (int)$daysUntil;
@@ -153,21 +147,21 @@
                             <span class="days-badge normal">{{ $daysUntil }}d</span>
                         @endif
                     </td>
-                    <td class="{{ $bill->type == 'income' ? 'text-success' : 'text-danger' }} fw-bold">
+                    <td class="td-amount {{ $bill->type == 'income' ? 'text-success' : 'text-danger' }} fw-bold">
                         @if($currentCurrency == 'IDR')
                             Rp {{ number_format($bill->amount, 0, ',', '.') }}
                         @else
                             $ {{ number_format($bill->amount / $exchangeRate['rate'], 2, '.', ',') }}
                         @endif
                     </td>
-                    <td>
+                    <td class="td-status">
                         @if($bill->is_active)
-                            <span class="fw-bold text-success">{{ __('recurring_status_active') }}</span>
+                            <span class="fw-bold text-success" style="font-size: 0.85rem;">{{ __('recurring_status_active') }}</span>
                         @else
-                            <span class="fw-bold text-secondary">{{ __('recurring_status_inactive') }}</span>
+                            <span class="fw-bold text-secondary" style="font-size: 0.85rem;">{{ __('recurring_status_inactive') }}</span>
                         @endif
                     </td>
-                    <td class="text-end">
+                    <td class="td-actions text-end">
                         <div class="action-buttons">
                             <a href="{{ route('recurring.edit', $bill->id) }}" class="btn-edit" title="{{ __('index_btn_edit') }}">
                                 <i class="fas fa-pencil-alt"></i>

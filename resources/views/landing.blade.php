@@ -36,18 +36,6 @@
             background-size: cover;
             background-position: center;
        }
-
-       /* --- NEW NAVBAR STYLES FOR HIDING ON SCROLL --- */
-       .navbar {
-           /* Add transform to the transition list */
-           transition: transform 0.3s ease-in-out, background-color 0.3s, box-shadow 0.3s !important;
-       }
-       
-       /* Class added via JS to hide navbar */
-       .navbar-hidden {
-           transform: translateY(-100%);
-           box-shadow: none;
-       }
     </style>
 </head>
 <body>
@@ -56,7 +44,7 @@
             <a class="navbar-brand d-flex align-items-center" href="#">
                 <img src="{{ asset('images/logo.png') }}" 
                     alt="Flux Logo" 
-                    style="height: 32px; width: auto; margin-right: 10px;">
+                >
                 <span style="font-family: 'Outfit', sans-serif; font-weight: 700; letter-spacing: -0.02em; font-size: 1.5rem;">flux</span>
             </a>
 

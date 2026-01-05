@@ -329,6 +329,7 @@
     align-items: center;
     gap: 0.5rem;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .dark-mode .btn-primary-custom {
@@ -355,6 +356,7 @@
     gap: 0.5rem;
     font-weight: 500;
     text-decoration: none;
+    white-space: nowrap;
 }
 
 .dark-mode .btn-secondary-custom {
@@ -467,6 +469,7 @@
 .header-actions {
     display: flex;
     gap: 0.75rem;
+    margin-left: auto;
 }
 
 /* Filter Container */
@@ -896,6 +899,10 @@
     text-decoration: underline;
 }
 
+.td-amount {
+    white-space: nowrap;
+}
+
 /* ===== RESPONSIVE DESIGN ===== */
 @media (max-width: 768px) {
     .transactions-header {
@@ -904,8 +911,6 @@
     }
     
     .header-actions {
-        width: 100%;
-        justify-content: space-between;
         margin-top: 1rem;
     }
     
@@ -921,12 +926,122 @@
     .action-buttons {
         justify-content: flex-start;
     }
+
+    .transactions-table th {
+        padding: 0.5rem;
+    }
     
     .pagination-container {
         flex-direction: column;
         gap: 1rem;
         align-items: center;
         text-align: center;
+    }
+
+    /* Hide Header */
+    .transactions-table thead {
+        display: none;
+    }
+
+    /* Reset Table */
+    .transactions-table, 
+    .transactions-table tbody, 
+    .transactions-table tr {
+        display: block;
+        width: 100%;
+    }
+
+    /* Row Style - Flat List */
+    .transactions-table tr {
+        display: grid;
+        /* 2 Columns: Main Info (Left) | Amount/Actions (Right) */
+        grid-template-columns: 1fr auto;
+        /* 3 Rows: Desc, Date/Receipt, Cat/Actions */
+        grid-template-rows: auto auto auto;
+        
+        padding: 1rem 0.5rem;
+        border-bottom: 1px solid var(--border-light);
+        margin-bottom: 0;
+        background-color: transparent;
+    }
+
+    .dark-mode .transactions-table tr {
+        border-bottom-color: var(--border-dark);
+    }
+
+    .transactions-table td {
+        display: block;
+        padding: 0;
+        border: none;
+    }
+
+    .td-desc {
+        grid-column: 1;
+        grid-row: 1;
+        margin-bottom: 0.25rem;
+    }
+
+    .td-amount {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: right;
+        font-size: 1rem;
+        align-self: start;
+    }
+
+    .td-date {
+        grid-column: 1;
+        grid-row: 2;
+        font-size: 0.8rem;
+        color: var(--text-secondary-light);
+        margin-bottom: 0.25rem;
+    }
+    .dark-mode .td-date { color: var(--text-secondary-dark); }
+
+    .td-receipt {
+        grid-column: 2;
+        grid-row: 2;
+        justify-self: end;
+        font-size: 0.8rem;
+    }
+
+    .td-cat {
+        grid-column: 1;
+        grid-row: 3;
+        align-self: center;
+    }
+    .td-cat .badge {
+        font-size: 0.7rem;
+        padding: 0.2rem 0.5rem;
+    }
+
+    .td-actions {
+        grid-column: 2;
+        grid-row: 3;
+        justify-self: end;
+        align-self: center;
+        margin-top: 0.25rem;
+    }
+
+    .action-buttons {
+        gap: 0.5rem;
+    }
+    .btn-edit, .btn-delete {
+        padding: 0.4rem 0.6rem;
+    }
+
+    .transactions-table {
+        margin-top: 0;
+    }
+
+    .transactions-table tr:last-child {
+        border-bottom: none;
+    }
+
+    .form-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
     }
 }
 
@@ -961,6 +1076,7 @@
 .fw-bold { font-weight: 600; }
 .text-end { text-align: right; }
 .text-muted { color: #94a3b8 !important; }
+.dark-mode .text-muted { color: #cbd5e1 !important; }
 .text-secondary { color: var(--text-secondary-light); }
 .dark-mode .text-secondary { color: var(--text-secondary-dark); }
 .opacity-50 { opacity: 0.5; }
