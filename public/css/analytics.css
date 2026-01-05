@@ -34,6 +34,7 @@
 .header-actions {
     display: flex;
     gap: 0.75rem;
+    margin-left: auto;
 }
 
 /* Primary & Secondary Buttons (Index Page) */
@@ -129,6 +130,7 @@
     font-weight: 700;
     color: var(--text-primary-light);
     margin-bottom: 0.25rem;
+    white-space: nowrap;
 }
 
 .dark-mode .stat-value {
@@ -517,6 +519,9 @@
     color: var(--text-secondary-dark);
 }
 
+.text-muted { color: #94a3b8 !important; }
+.dark-mode .text-muted { color: #cbd5e1 !important; }
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .stats-cards {
@@ -534,11 +539,6 @@
     .analytics-header {
         flex-direction: column;
         align-items: flex-start;
-    }
-    
-    .header-actions {
-        width: 100%;
-        justify-content: space-between;
     }
     
     .chart-wrapper {

@@ -192,7 +192,7 @@
         </div>
         <div style="margin-bottom: 1rem;">
             <p class="text-muted" style="font-size: 0.9em; margin-bottom: 0.5rem;">{{ __('analytics_est_monthly_fixed_cost') }}</p>
-            <h2 style="font-size: 1.5rem; color: #1f2937;">
+            <h2 class="text-muted" style="font-size: 1.5rem;">
                 @if($currentCurrency == 'IDR')
                     Rp {{ number_format($totalRecurringMonthly, 0, ',', '.') }}
                 @else

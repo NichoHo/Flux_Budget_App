@@ -151,34 +151,27 @@
         <table class="transactions-table">
             <thead>
                 <tr>
-                    <th width="12%">{{ __('table_date') }}</th>
-                    <th width="25%">{{ __('table_description') }}</th>
-                    <th width="10%">{{ __('table_type') }}</th>
-                    <th width="12%">{{ __('table_category') }}</th>
+                    <th width="15%">{{ __('table_date') }}</th>
+                    <th width="30%">{{ __('table_description') }}</th>
+                    <th width="15%">{{ __('table_category') }}</th>
                     <th width="10%">{{ __('table_receipt') }}</th>
-                    <th width="30%" class="text-end">{{ __('table_amount') }}</th>
-                    <th width="11%"></th>
+                    <th width="20%" class="text-end">{{ __('table_amount') }}</th>
+                    <th width="10%"></th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($transactions as $transaction)
                 <tr>
-                    <td>{{ $transaction->created_at->format('Y-m-d') }}</td>
-                    <td><div class="fw-bold">{{ $transaction->description }}</div></td>
-                    <td>
-                        <span class="badge {{ $transaction->type == 'income' ? 'badge-income' : 'badge-expense' }}">
-                            {{ $transaction->type == 'income' ? __('index_type_income') : __('index_type_expense') }}
-                        </span>
-                    </td>
-                    <td>
+                    <td class="td-date">{{ $transaction->created_at->format('Y-m-d') }}</td>
+                    <td class="td-desc"><div class="fw-bold">{{ $transaction->description }}</div></td>
+                    <td class="td-cat">
                         @if($transaction->category)
                             <span class="badge {{ $transaction->type == 'income' ? 'badge-income-category' : 'badge-expense-category' }}">
-                                {{-- Translate Category --}}
                                 {{ __($transaction->category) != $transaction->category ? __($transaction->category) : $transaction->category }}
                             </span>
                         @else <span class="text-secondary opacity-50">-</span> @endif
                     </td>
-                    <td>
+                    <td class="td-receipt">
                         @if($transaction->receipt_image_url)
                             @php
                                 $receiptPath = Str::startsWith($transaction->receipt_image_url, 'http') 
@@ -190,14 +183,14 @@
                             </a>
                         @else <span class="text-secondary opacity-50">-</span> @endif
                     </td>
-                    <td class="text-end {{ $transaction->type == 'income' ? 'text-success' : 'text-danger' }} fw-bold">
+                    <td class="td-amount text-end {{ $transaction->type == 'income' ? 'text-success' : 'text-danger' }} fw-bold">
                         @if($currentCurrency == 'IDR')
                             Rp {{ number_format($transaction->amount, 0, ',', '.') }}
                         @else
                             $ {{ number_format($transaction->amount / $exchangeRate['rate'], 2, '.', ',') }}
                         @endif
                     </td>
-                    <td class="text-end">
+                    <td class="td-actions text-end">
                         <div class="action-buttons">
                             <a href="{{ route('transactions.edit', $transaction->id) }}" class="btn-edit"><i class="fas fa-pencil-alt"></i></a>
                             <form action="{{ route('transactions.destroy', $transaction->id) }}" method="POST" style="display: inline;">
@@ -211,7 +204,7 @@
             </tbody>
         </table>
     </div>
-    
+
     @if($transactions->hasPages())
     <div class="pagination-container">
         <span class="page-info">
