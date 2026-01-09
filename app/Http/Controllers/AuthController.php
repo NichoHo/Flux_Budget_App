@@ -24,8 +24,8 @@ class AuthController extends Controller
             'preferred_language' => 'required|in:en,id' 
         ]);
 
-        // 2. Create User (Hash the password!) [cite: 12]
-        User::create([
+        // 2. Create User (Hash the password!)
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password), // Encryption
@@ -33,7 +33,13 @@ class AuthController extends Controller
         ]);
 
         // 3. Login automatically and redirect
-        return redirect()->route('login')->with('success', 'Account created! Please login.');
+        Auth::login($user);
+        $request->session()->regenerate();
+        
+        // Set locale immediately based on preference
+        session(['locale' => $user->preferred_language]);
+
+        return redirect()->route('dashboard');
     }
 
     // Show Login Form
