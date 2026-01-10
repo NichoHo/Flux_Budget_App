@@ -30,7 +30,6 @@ Flux is a personal finance website designed to serve as your **Digital Financial
 
 ### 💡 Intelligence & User Experience
 * **Personalized Recommendations:** Receive smart suggestions to optimize your budget, such as diversifying income or reducing high fixed costs.
-* **Secure Access:** Sign up via email or use Social Auth with Google and GitHub.
 * **Customization:** Support for both Light and Dark modes and language preferences.
 
 ## 🛠️ Tech Stack
@@ -44,7 +43,6 @@ Flux is a personal finance website designed to serve as your **Digital Financial
 ### Prerequisites
 * PHP 8.1+
 * Composer
-* Node.js & NPM
 * MySQL Database
 
 1.  **Clone the Repository**
@@ -56,7 +54,6 @@ Flux is a personal finance website designed to serve as your **Digital Financial
 2.  **Install Dependencies**
     ```bash
     composer install
-    npm install && npm run build
     ```
 
 3.  **Environment Setup**
