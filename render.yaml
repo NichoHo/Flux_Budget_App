@@ -7,10 +7,8 @@ databases:
 services:
   - type: web
     name: flux-budget-app
-    env: php
+    env: docker # Changed from "php" to "docker"
     plan: free # Change to "starter" if you want a paid tier
-    buildCommand: "./render-build.sh"
-    # Render's PHP environment uses Apache automatically; no startCommand is needed.
     envVars:
       - key: APP_NAME
         value: "Flux Budget App"
@@ -18,10 +16,6 @@ services:
         value: production
       - key: APP_DEBUG
         value: false
-      - key: DOCUMENT_ROOT
-        value: /var/www/html/public
-      - key: NODE_VERSION
-        value: "20.10.0" # Ensures Node is available for your Vite build
       - key: DB_CONNECTION
         value: pgsql
       - key: DATABASE_URL
@@ -29,7 +23,6 @@ services:
           name: flux-budget-db
           property: connectionString
       - key: APP_URL
-        # Render will generate a URL for you. Update this later if you use a custom domain.
         value: https://flux-budget-app.onrender.com 
       - key: APP_KEY
-        sync: false # You will manually input this in the Render Dashboard (see Step 5)
+        sync: false
