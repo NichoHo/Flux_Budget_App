@@ -15,10 +15,13 @@ RUN apt-get update && apt-get install -y \
 # 2. Enable Apache mod_rewrite
 RUN a2enmod rewrite
 
-# 3. Configure Apache DocumentRoot
+# 3. Change the default Apache Document Root to Laravel's public folder
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+RUN sed -i "s/Listen 80/Listen \${PORT:-80}/g" /etc/apache2/ports.conf
+RUN sed -i "s/<VirtualHost \*:80>/<VirtualHost \*:\${PORT:-80}>/g" /etc/apache2/sites-available/000-default.conf
+
+# Enable Apache mod_rewrite for Laravel's routing to work
+RUN a2enmod rewrite
 
 # 4. Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
