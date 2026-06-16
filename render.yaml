@@ -2,13 +2,13 @@ databases:
   - name: flux-budget-db
     databaseName: fluxbudget
     user: fluxuser
-    plan: free # Change to "starter" if you want a paid tier
+    plan: free
 
 services:
   - type: web
     name: flux-budget-app
-    env: docker # Changed from "php" to "docker"
-    plan: free # Change to "starter" if you want a paid tier
+    env: docker
+    plan: free
     envVars:
       - key: APP_NAME
         value: "Flux Budget App"
